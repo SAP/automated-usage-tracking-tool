@@ -1,0 +1,40 @@
+{
+  "name": "automated-usage-tracking-tool",
+  "version": "1.0.0",
+  "description": "Automated usage tracking tool is a user-centric data collection tool, using a Customer Data Cloud tenant, that tracks the usage of CX IAS's automation tools, generates comprehensive reports for evaluating tool effectiveness and improvements.",
+  "main": "dist/app.js",
+  "scripts": {
+    "start": "tsc && node dist/src/app.js",
+    "compile": "tsc",
+    "lint": "eslint ./src",
+    "test": "vitest --root src",
+    "coverage": "vitest run --coverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SAP/automated-usage-tracking-tool.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SAP/automated-usage-tracking-tool/issues"
+  },
+  "homepage": "https://github.com/SAP/automated-usage-tracking-tool#readme",
+  "devDependencies": {
+    "eslint": "^9.5.0",
+    "globals": "^15.6.0",
+    "typescript": "^5.4.5",
+    "prettier": "^3.3.2",
+    "@types/node": "20.14.5",
+    "@types/node-fetch": "^2.6.11",
+    "@types/uuid": "^9.0.8",
+    "vitest": "^1.6.0",
+    "@vitest/coverage-v8": "^1.6.0",
+    "mock-stdin": "^1.0.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "ts-node": "^10.9.2",
+    "uuid": "^10.0.0"
+  }
+}
