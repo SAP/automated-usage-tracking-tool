@@ -1,5 +1,3 @@
-import CredentialsReader, { Credentials } from './credentialsReader'
-
 type Params = Record<string, string>
 
 interface Response {
@@ -28,12 +26,9 @@ class Gigya {
   private static readonly RETRYABLE_ERROR_CODES = [403048, 500001]
   private static readonly MAX_RETRY_COUNT = 15
 
-  private credentials: Credentials
   private static instance: Gigya
 
-  private constructor() {
-    this.credentials = CredentialsReader.get()
-  }
+  private constructor() {}
 
   static getInstance(): Gigya {
     if (!this.instance) {
@@ -54,7 +49,7 @@ class Gigya {
   }
 
   async request(url: string, params: Params, retryCount = 0): Promise<GigyaResponse> {
-    const body = { userKey: this.credentials.userKey, secret: this.credentials.secret, ...params }
+    const body = { ...params }
     try {
       const response = await this.post(url, body)
 

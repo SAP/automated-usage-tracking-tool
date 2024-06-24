@@ -112,3 +112,4 @@ dist
 *.iml
 
 # development time ignore rules
+usageTracking

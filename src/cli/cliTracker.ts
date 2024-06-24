@@ -1,35 +1,39 @@
-import Consent, { ConsentType } from '../common/consent'
+import { ConsentType } from '../common/consent'
 import Storage from '../common/storage'
-import Tracker from '../common/tracker'
+import Tracker, { ConsentArguments, TrackUsageArguments, TrackerArguments } from '../common/tracker'
 import { CliConsent } from './cliConsent'
 import FileStorage from './fileStorage'
 
 export default class CliTracker implements Tracker {
   apiKey: string
+  dataCenter: string
   storage: Storage
 
-  constructor(apiKey: string, storageName: string) {
-    this.apiKey = apiKey
-    this.storage = new FileStorage(storageName)
+  constructor(trackerArguments: TrackerArguments) {
+    this.apiKey = trackerArguments.apiKey
+    this.dataCenter = trackerArguments.dataCenter
+    this.storage = new FileStorage(trackerArguments.storageName ? trackerArguments.storageName : 'usageTracking')
   }
 
-  async requestConsent(requestType: ConsentType, email: string = crypto.randomUUID() + '@usageTrackingTool.com', message: string = Consent.message): Promise<boolean> {
+  async requestConsent(consentArguments: ConsentArguments): Promise<boolean> {
     const cliConsent: CliConsent = new CliConsent()
     if (!this.storage.isConsentGranted()) {
-      const consent = requestType === ConsentType.CONFIRMATION ? await cliConsent.askConsentConfirm() : await cliConsent.askConsentQuestion()
-      console.log(`consent=${consent}`)
+      const consent =
+        consentArguments.requestType === ConsentType.QUESTION
+          ? await cliConsent.askConsentQuestion(consentArguments.message)
+          : await cliConsent.askConsentConfirm(consentArguments.message)
       if (consent) {
-        this.storage.setConsentGranted(consent, email)
+        this.storage.setConsentGranted(consent, consentArguments.email ? consentArguments.email : crypto.randomUUID() + '@usageTrackingTool.com')
       }
       return consent
     }
     return true
   }
 
-  trackUsage(toolName: string): void {
-    console.log(`trackUsage called for tool ${toolName}`)
+  trackUsage(trackUsageArguments: TrackUsageArguments): void {
+    console.log(`trackUsage called for tool ${trackUsageArguments.toolName}`)
     if (this.storage.isConsentGranted()) {
-      this.storage.setLatestUsage(toolName)
+      this.storage.setLatestUsage(trackUsageArguments.toolName)
     }
   }
 }

@@ -1,21 +1,28 @@
 import { v4 as uuidv4 } from 'uuid'
-import UsageProperties from './usageProperties'
 
 export default class Usage {
-  id: string
-  toolName: string
-  createdAt: Date
+  properties: UsageProperties
 
-  constructor(toolName: string) {
-    this.id = uuidv4()
-    this.toolName = toolName
-    this.createdAt = new Date()
+  constructor(toolName: string, featureName?: string) {
+    this.properties = {
+      id: uuidv4(),
+      toolName: toolName,
+      featureName: featureName ? featureName : '',
+      createdAt: new Date(),
+    }
   }
 
   static toUsage(jsonObj: UsageProperties) {
-    const usage = new Usage(jsonObj.toolName)
-    usage.id = jsonObj.id
-    usage.createdAt = jsonObj.createdAt
+    const usage = new Usage(jsonObj.toolName, jsonObj.featureName)
+    usage.properties.id = jsonObj.id
+    usage.properties.createdAt = jsonObj.createdAt
     return usage
   }
+}
+
+export interface UsageProperties {
+  id: string
+  toolName: string
+  featureName: string
+  createdAt: Date
 }

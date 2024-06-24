@@ -12,6 +12,7 @@ describe('File Storage', () => {
   let consent: boolean
   let storage: FileStorage
   const toolName: string = 'tool name'
+  const featureName: string = 'feature name'
 
   let hour: number
   let minutes: number
@@ -56,6 +57,10 @@ describe('File Storage', () => {
     return `"location":"${storageLocation}","consentGranted":${consent},"email":"${email}"`
   }
 
+  function getFileUsage(createdAt: string) {
+    return `{"id":"id","toolName":"${toolName}","featureName":"${featureName}","createdAt":"${createdAt}"}`
+  }
+
   test('init', () => {
     vi.spyOn(fs, 'readFileSync').mockReturnValue('')
     storage = new FileStorage(storageLocation)
@@ -81,33 +86,28 @@ describe('File Storage', () => {
   test('set latest usage', () => {
     consent = true
     vi.spyOn(uuid, 'v4').mockReturnValue('id')
-    vi.spyOn(fs, 'readFileSync').mockReturnValue(`{${getFileContentExceptUsages()},"latestUsages":[{"id":"id","toolName":"${toolName}","createdAt":"2020-02-01T13:58:00.000Z"}]}`)
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(`{${getFileContentExceptUsages()},"latestUsages":[${getFileUsage('2020-02-01T13:58:00.000Z')}]}`)
     storage = new FileStorage(storageLocation)
 
     // add an old usage that will be filtered out next time
     hour -= 1
     const oldUsage = new Date(2024, 1, 1, hour, minutes)
     vi.setSystemTime(oldUsage)
-    storage.setLatestUsage(toolName)
-    expect(storage.toString()).toEqual(`{${getFileContentExceptUsages()},"latestUsages":[{"id":"id","toolName":"${toolName}","createdAt":"${getSystemDateString()}"}]}`)
+    storage.setLatestUsage(toolName, featureName)
+    expect(storage.toString()).toEqual(`{${getFileContentExceptUsages()},"latestUsages":[${getFileUsage(getSystemDateString())}]}`)
 
     // add another usage, that will be the only one as the previous was filtered out
     hour += 1
     vi.setSystemTime(systemDate)
     const firstUsageStr = getSystemDateString()
-    storage.setLatestUsage(toolName)
-    expect(storage.toString()).toEqual(`{${getFileContentExceptUsages()},"latestUsages":[{"id":"id","toolName":"${toolName}","createdAt":"${getSystemDateString()}"}]}`)
+    storage.setLatestUsage(toolName, featureName)
+    expect(storage.toString()).toEqual(`{${getFileContentExceptUsages()},"latestUsages":[${getFileUsage(getSystemDateString())}]}`)
 
     // add a second usage
     minutes += 1
     const recentUsage = new Date(2024, 1, 1, hour, minutes)
     vi.setSystemTime(recentUsage)
-    storage.setLatestUsage(toolName)
-    expect(storage.toString()).toEqual(
-      `{${getFileContentExceptUsages()},"latestUsages":[` +
-        `{"id":"id","toolName":"${toolName}","createdAt":"${firstUsageStr}"},` +
-        `{"id":"id","toolName":"${toolName}","createdAt":"${getSystemDateString()}"}` +
-        `]}`,
-    )
+    storage.setLatestUsage(toolName, featureName)
+    expect(storage.toString()).toEqual(`{${getFileContentExceptUsages()},"latestUsages":[` + `${getFileUsage(firstUsageStr)},` + `${getFileUsage(getSystemDateString())}` + `]}`)
   })
 })

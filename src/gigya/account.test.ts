@@ -1,10 +1,9 @@
 import { describe, test, beforeEach, beforeAll, afterAll, expect, vi, Mock } from 'vitest'
 import Account from './account'
 import { GigyaResponse } from './gigya'
-import { createFetchResponse, getSiteConfigSuccessfulResponse, gigyaResponseOk } from './account.dataTest'
+import { gigyaResponseOk } from './account.dataTest'
 
 const gigyaResponse: GigyaResponse = Object.assign(gigyaResponseOk, {
-  dataCenter: 'eu1',
   regToken: 'token',
 })
 
@@ -13,21 +12,17 @@ global.fetch = vi.fn(() =>
     json: () => Promise.resolve(gigyaResponse),
   }),
 ) as Mock
-/*
-global.fetch = vi.fn(() =>
-    createFetchResponse(gigyaResponse)
-) as Mock;
-*/
 
 describe('Account', () => {
   let account: Account
   const apiKey: string = '4_TCuGT23_GS-FxSIFf3YNdQ'
+  const dataCenter: string = 'eu1'
 
   beforeAll(() => {})
 
   beforeEach(() => {
     //vi.restoreAllMocks();
-    account = new Account(apiKey)
+    account = new Account(apiKey, dataCenter)
   })
 
   afterAll(() => {})

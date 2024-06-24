@@ -1,4 +1,4 @@
-import Usage from './usage'
+import Usage, { UsageProperties } from './usage'
 
 export default abstract class Storage {
   protected email: string
@@ -23,7 +23,7 @@ export default abstract class Storage {
       this.consentGranted = jsonObj.consentGranted
       this.email = jsonObj.email
       this.latestUsages = []
-      jsonObj.latestUsages.map((u: Usage) => {
+      jsonObj.latestUsages.map((u: UsageProperties) => {
         this.latestUsages.push(Usage.toUsage(u))
       })
     }
@@ -35,11 +35,11 @@ export default abstract class Storage {
       location: this.location,
       consentGranted: this.consentGranted,
       email: this.email,
-      latestUsages: this.latestUsages,
+      latestUsages: this.latestUsages.map((lt) => lt.properties),
     })
   }
 
   abstract setConsentGranted(consent: boolean, email: string): void
 
-  abstract setLatestUsage(toolName: string): void
+  abstract setLatestUsage(toolName: string, featureName?: string): void
 }
