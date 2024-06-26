@@ -6,8 +6,3 @@ export default abstract class Consent {
   abstract askConsentConfirm(): void
   abstract askConsentQuestion(): void
 }
-
-export enum ConsentType {
-  CONFIRMATION = 'confirmation',
-  QUESTION = 'question',
-}

@@ -1,11 +1,11 @@
-import { ConsentType } from './consent'
 import Storage from './storage'
 
 export default interface Tracker {
   apiKey: string
   storage: Storage
 
-  requestConsent(consentArguments: ConsentArguments): Promise<boolean>
+  requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean>
+  requestConsentConfirmation(consentArguments: ConsentArguments): Promise<boolean>
   trackUsage(trackUsageArguments: TrackUsageArguments): void
 }
 
@@ -16,7 +16,6 @@ export interface TrackerArguments {
 }
 
 export interface ConsentArguments {
-  requestType?: ConsentType
   email?: string
   message?: string
 }

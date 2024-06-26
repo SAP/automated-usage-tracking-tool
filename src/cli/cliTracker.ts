@@ -1,4 +1,3 @@
-import { ConsentType } from '../common/consent'
 import Storage from '../common/storage'
 import Tracker, { ConsentArguments, TrackUsageArguments, TrackerArguments } from '../common/tracker'
 import Account from '../gigya/account'
@@ -18,13 +17,17 @@ export default class CliTracker implements Tracker {
     this.account = new Account(this.apiKey, this.dataCenter)
   }
 
-  async requestConsent(consentArguments: ConsentArguments): Promise<boolean> {
-    const cliConsent: CliConsent = new CliConsent()
+  async requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.requestConsent(new CliConsent().askConsentQuestion, consentArguments)
+  }
+
+  async requestConsentConfirmation(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.requestConsent(new CliConsent().askConsentConfirm, consentArguments)
+  }
+
+  private async requestConsent(consentFunction: ConsentFunction, consentArguments: ConsentArguments): Promise<boolean> {
     if (!this.storage.isConsentGranted()) {
-      const consent =
-        consentArguments.requestType === ConsentType.QUESTION
-          ? await cliConsent.askConsentQuestion(consentArguments.message)
-          : await cliConsent.askConsentConfirm(consentArguments.message)
+      const consent = await consentFunction(consentArguments.message)
       if (consent) {
         const email: string = consentArguments.email ? consentArguments.email : crypto.randomUUID() + '@usageTrackingTool.com'
         this.storage.setConsentGranted(consent, email)
@@ -43,3 +46,5 @@ export default class CliTracker implements Tracker {
     }
   }
 }
+
+type ConsentFunction = (message?: string) => Promise<boolean>
