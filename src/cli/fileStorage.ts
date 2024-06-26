@@ -39,7 +39,7 @@ export default class FileStorage extends Storage {
   #filterLatestUsages(): void {
     this.latestUsages = this.latestUsages.filter((usage) => {
       const THIRTY_MINUTES: number = 30 * 60 * 1000 // ms
-      return Math.abs(new Date().getTime() - new Date(usage.properties.createdAt).getTime()) < THIRTY_MINUTES
+      return Math.abs(new Date().getTime() - new Date(usage.createdAt).getTime()) < THIRTY_MINUTES
     })
   }
 }

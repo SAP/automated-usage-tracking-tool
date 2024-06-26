@@ -35,8 +35,16 @@ export default abstract class Storage {
       location: this.location,
       consentGranted: this.consentGranted,
       email: this.email,
-      latestUsages: this.latestUsages.map((lt) => lt.properties),
+      latestUsages: this.latestUsages,
     })
+  }
+
+  getLatestUsages(): Usage[] {
+    return this.latestUsages
+  }
+
+  getEmail(): string {
+    return this.email
   }
 
   abstract setConsentGranted(consent: boolean, email: string): void

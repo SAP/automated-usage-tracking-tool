@@ -11,6 +11,7 @@ async function main() {
   }
   const consentArguments: ConsentArguments = {
     requestType: ConsentType.QUESTION,
+    email: 'example99@test.com',
   }
   const trackUsageArguments: TrackUsageArguments = {
     toolName: 'cdc-toolkit',

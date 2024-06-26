@@ -19,6 +19,7 @@ export interface GigyaResponse {
   errorMessage?: string
   dataCenter?: string
   regToken?: string
+  UID?: string
 }
 
 class Gigya {
