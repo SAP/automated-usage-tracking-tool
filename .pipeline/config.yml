@@ -18,7 +18,7 @@ stages:
     npmExecuteScripts: true
 steps:
   artifactPrepareVersion:
-    gitHttpsCredentialVaultSecretName: 'GROUP-SECRETS/github-cdc-github'
+    gitHttpsCredentialVaultSecretName: 'GROUP-SECRETS/sap-customer-data-cloud-accelerator-github'
   executeBuild:
     buildType: stage
   sapCallStagingService:
