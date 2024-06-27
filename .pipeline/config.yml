@@ -29,7 +29,9 @@ steps:
     whitesourceProductToken: '7e3f2d441e7745de9745cd151884d35724853f9363dd4d42b5b0f30b3558941e'
   sonarExecuteScan:
     serverUrl: 'https://sonar.tools.sap'
+    sonarTokenCredentialsId: 'hyperspace-sonar-i545698'
     sonarVaultSecretName: 'GROUP-SECRETS/sonar-cdc-sonar-token'
+    waitForQualityGate: true
   checkmarxOneExecuteScan:
     projectName: 'sap-automation-tool-usage-tracker'
     applicationName: 'OS_CX_AUTOMATION'
