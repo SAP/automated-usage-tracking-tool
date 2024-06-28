@@ -4,11 +4,10 @@
   "description": "Automated usage tracking tool is a user-centric data collection tool, using a Customer Data Cloud tenant, that tracks the usage of CX IAS's automation tools, generates comprehensive reports for evaluating tool effectiveness and improvements.",
   "main": "dist/app.js",
   "scripts": {
-    "start": "tsc && node dist/src/app.js",
-    "compile": "tsc",
+    "prestart": "tsc",
+    "start": "node dist/src/app.js",
     "lint": "eslint ./src",
-    "test": "vitest --root src",
-    "coverage": "vitest run --coverage"
+    "test": "vitest --root src --coverage"
   },
   "repository": {
     "type": "git",

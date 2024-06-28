@@ -34,14 +34,10 @@ steps:
     sonarVaultSecretName: 'PIPELINE-36039/sonar'
     waitForQualityGate: true
     projectKey: automated-usage-tracking-tool
-  checkmarxOneExecuteScan:
-    projectName: 'automated-usage-tracking-tool'
-    applicationName: 'OS_CX_AUTOMATION'
-    preset: 'SAP_Corp_JavaScript_Server' # you can find the preset per language here - https://github.wdf.sap.corp/pages/Security-Testing/doc/cxone/Presets/
   checkmarxExecuteScan:
     projectName: 'automated-usage-tracking-tool'
     teamName: '/CxServer/SP/SAP/PI/SMEDevelopmentSupport/SMECoreB1Program'
-    preset: '100205' # https://github.wdf.sap.corp/pages/Security-Testing/doc/checkmarx/Presets/
+    preset: 'SAP_Corp_JavaScript_Server' # https://github.wdf.sap.corp/pages/Security-Testing/doc/checkmarx/Presets/
   sapCumulusUpload:
     pipelineId: '917501e3-d9c2-4ba9-be50-c8baf4ff0266'
   handlePipelineStepErrors:
