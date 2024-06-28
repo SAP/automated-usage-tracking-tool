@@ -1,0 +1,49 @@
+general:
+  buildTool: 'npm'
+  productiveBranch: 'main'
+  pipelineOptimization: false
+  gitHttpsCredentialsId: 'hyperspace-github-tools-sap-i545698'
+  vaultAppRoleTokenCredentialsId: 'vault-approle-role-id-3103-36039'
+  vaultAppRoleSecretTokenCredentialsId: 'vault-approle-secret-id-accessor-3103-36039'
+  vaultPath: 'piper/PIPELINE-GROUP-3103'
+  vaultBasePath: 'piper/PIPELINE-GROUP-3103'
+  vaultPipelineName: 'PIPELINE-36039'
+  vaultServerUrl: 'https://vault.tools.sap'
+  vaultNamespace: 'ies/hyperspace/pipelines'
+  nativeBuild: true
+  nativeVoting: true
+stages:
+  Central Build:
+    hadolintExecute: false
+    sonarExecuteScan: true
+    npmExecuteScripts: true
+steps:
+  artifactPrepareVersion:
+    gitHttpsCredentialVaultSecretName: 'GROUP-SECRETS/sap-customer-data-cloud-accelerator-github'
+  executeBuild:
+    buildType: stage
+  sapCallStagingService:
+    url: 'https://staging.repositories.cloud.sap/stage/api'
+    profile: 'group-3103-default'
+  whitesourceExecuteScan:
+    whitesourceProductName: 'SHC - sap-automation-tool-usage-tracker'
+    whitesourceProductToken: '7e3f2d441e7745de9745cd151884d35724853f9363dd4d42b5b0f30b3558941e'
+  sonarExecuteScan:
+    serverUrl: 'https://sonar.tools.sap'
+    sonarTokenCredentialsId: 'hyperspace-sonar-i545698'
+    sonarVaultSecretName: 'PIPELINE-36039/sonar'
+    waitForQualityGate: true
+    projectKey: automated-usage-tracking-tool
+  checkmarxExecuteScan:
+    projectName: 'automated-usage-tracking-tool'
+    teamName: '/CxServer/SP/SAP/PI/SMEDevelopmentSupport/SMECoreB1Program'
+    preset: 'SAP_Corp_JavaScript_Client' # https://github.wdf.sap.corp/pages/Security-Testing/doc/checkmarx/Presets/
+    filterPattern: '!**/node_modules/**, !**/.xmake/**, !**/coverage/**, !**/dist/**, !**/__tests__/**, **/src/**, **/*.html, **/*.xml, **/*.js, **/*.ts'
+  sapCumulusUpload:
+    pipelineId: '917501e3-d9c2-4ba9-be50-c8baf4ff0266'
+  handlePipelineStepErrors:
+    failOnError: false
+  npmExecuteScripts:
+    runScripts:
+      - test
+    failOnError: true
