@@ -31,7 +31,7 @@ steps:
   sonarExecuteScan:
     serverUrl: 'https://sonar.tools.sap'
     sonarTokenCredentialsId: 'hyperspace-sonar-i545698'
-    sonarVaultSecretName: 'GROUP-SECRETS/sonar-cdc-sonar-token'
+    sonarVaultSecretName: 'PIPELINE-36039/sonar'
     waitForQualityGate: true
   checkmarxOneExecuteScan:
     projectName: 'sap-automation-tool-usage-tracker'
