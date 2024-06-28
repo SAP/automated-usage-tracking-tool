@@ -37,7 +37,7 @@ steps:
   checkmarxExecuteScan:
     projectName: 'automated-usage-tracking-tool'
     teamName: '/CxServer/SP/SAP/PI/SMEDevelopmentSupport/SMECoreB1Program'
-    preset: 'SAP_Corp_JavaScript_Server' # https://github.wdf.sap.corp/pages/Security-Testing/doc/checkmarx/Presets/
+    preset: 'SAP_Corp_JavaScript_Client' # https://github.wdf.sap.corp/pages/Security-Testing/doc/checkmarx/Presets/
   sapCumulusUpload:
     pipelineId: '917501e3-d9c2-4ba9-be50-c8baf4ff0266'
   handlePipelineStepErrors:
