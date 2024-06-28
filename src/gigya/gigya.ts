@@ -41,7 +41,7 @@ class Gigya {
   private async post(url: string, body: Params): Promise<GigyaResponse> {
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Strict-Transport-Security': 'max-age=31536000', 'Content-Security-Policy': "default-src 'self';" },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams(body),
     }
 
