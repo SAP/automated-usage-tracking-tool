@@ -17,7 +17,6 @@ describe('File Storage', () => {
   let hour: number
   let minutes: number
   let systemDate: Date
-  let systemDateStr: string
 
   beforeAll(() => {
     vi.useFakeTimers()
@@ -41,7 +40,6 @@ describe('File Storage', () => {
     hour = 13
     minutes = 50
     systemDate = new Date(2024, 1, 1, hour, minutes)
-    systemDateStr = getSystemDateString()
     vi.setSystemTime(systemDate)
   }
 

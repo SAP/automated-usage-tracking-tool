@@ -19,7 +19,7 @@ async function main() {
   const tracker: Tracker = new CliTracker(trackerArguments)
   if (process.argv[2] === 'c') {
     // npm start c
-    const consent: boolean = await tracker.requestConsentConfirmation(consentArguments)
+    await tracker.requestConsentConfirmation(consentArguments)
   } else {
     const consent: boolean = await tracker.requestConsentQuestion(consentArguments)
     if (!consent) {
