@@ -18,7 +18,7 @@ export default abstract class Storage {
   }
 
   toStorage(content: string) {
-    if (content.length > 0) {
+    if (content && content.length > 0) {
       const jsonObj = JSON.parse(content)
       this.consentGranted = jsonObj.consentGranted
       this.email = jsonObj.email
