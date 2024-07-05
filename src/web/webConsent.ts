@@ -5,23 +5,23 @@ export default class WebConsent implements Consent {
   #confirmButtonId = 'automated-usage-tracking-tool-confirm-button'
   #declineButtonId = 'automated-usage-tracking-tool-decline-button'
 
-  askConsentConfirm() {
+  askConsentConfirm(message: string = Consent.message) {
     // Only allows yes
     return new Promise<boolean>((resolve) => {
-      this.#setDialog(this.#confirmButtonHandler(resolve), null, true)
+      this.#setDialog(this.#confirmButtonHandler(resolve), null, true, message)
     })
   }
 
-  askConsentQuestion() {
+  askConsentQuestion(message: string = Consent.message) {
     // if declines, continues without tracking
     return new Promise<boolean>((resolve) => {
-      this.#setDialog(this.#confirmButtonHandler(resolve), this.#declineButtonHandler(resolve), false)
+      this.#setDialog(this.#confirmButtonHandler(resolve), this.#declineButtonHandler(resolve), false, message)
     })
   }
 
-  #setDialog(confirmButtonHandler: EventListener, declineButtonHandler: EventListener | null, isConfirmDialog: boolean) {
+  #setDialog(confirmButtonHandler: EventListener, declineButtonHandler: EventListener | null, isConfirmDialog: boolean, message: string) {
     if (!this.#confirmDialogExists()) {
-      this.#insertConfirmDialog(isConfirmDialog)
+      this.#insertConfirmDialog(isConfirmDialog, message)
       this.#setEventHandler(this.#getDialogButton(this.#confirmButtonId), 'click', confirmButtonHandler)
       this.#preventEscape()
       if (!isConfirmDialog) {
@@ -31,12 +31,12 @@ export default class WebConsent implements Consent {
     this.#getConfirmDialog().showModal()
   }
 
-  #getConfirmDialogHTML(isConfirmDialog: boolean) {
+  #getConfirmDialogHTML(isConfirmDialog: boolean, message: string) {
     if (isConfirmDialog) {
       return `
         <div>
           <dialog id=${this.#confirmDialogId} style="width:400px">
-          <p>${Consent.message}</p>
+          <div>${message}</div>
               <button id=${this.#confirmButtonId}>Yes</button>
           </dialog>
         </div>`
@@ -44,7 +44,7 @@ export default class WebConsent implements Consent {
       return `
         <div>
           <dialog id=${this.#confirmDialogId} style="width:400px">
-          <p>${Consent.message}</p>
+          <div>${message}</div>
               <button id=${this.#confirmButtonId}>Yes</button>
               <button id=${this.#declineButtonId}>No</button>
           </dialog>
@@ -68,8 +68,8 @@ export default class WebConsent implements Consent {
     return document.getElementById(this.#confirmDialogId)
   }
 
-  #insertConfirmDialog(isConfirmDialog: boolean) {
-    document.body.insertAdjacentHTML('beforeend', this.#getConfirmDialogHTML(isConfirmDialog))
+  #insertConfirmDialog(isConfirmDialog: boolean, message: string) {
+    document.body.insertAdjacentHTML('beforeend', this.#getConfirmDialogHTML(isConfirmDialog, message))
   }
 
   #commonButtonHandler(resolve: Function, value: boolean) {
