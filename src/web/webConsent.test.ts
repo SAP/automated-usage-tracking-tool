@@ -4,8 +4,8 @@ import WebConsent from './webConsent'
 // @vitest-environment jsdom
 
 describe('Web Consent', () => {
-  const confirmButtonId = 'automated-usage-tracking-tool-confirm-button'
-  const declineButtonId = 'automated-usage-tracking-tool-decline-button'
+  const dialogConfirmButtonId = 'automated-usage-tracking-tool-dialog-confirm-button'
+  const dialogDeclineButtonId = 'automated-usage-tracking-tool-dialog-decline-button'
 
   let webConsent: WebConsent = new WebConsent()
 
@@ -28,19 +28,19 @@ describe('Web Consent', () => {
 
   test('should create and display the consent dialogue with only confirm button and return true on click', async () => {
     const result = webConsent.askConsentConfirm()
-    createEvent(confirmButtonId, 'click')
+    createEvent(dialogConfirmButtonId, 'click')
     expect(await result).toBe(true)
   })
 
   test('should create and display the consent dialogue with confirm and decline buttons and return true on click confirm', async () => {
     const result = webConsent.askConsentQuestion()
-    createEvent(confirmButtonId, 'click')
+    createEvent(dialogConfirmButtonId, 'click')
     expect(await result).toBe(true)
   })
 
   test('should create and display the consent dialogue with confirm and decline buttons and return false on click decline', async () => {
     const result = webConsent.askConsentQuestion()
-    createEvent(declineButtonId, 'click')
+    createEvent(dialogDeclineButtonId, 'click')
     expect(await result).toBe(false)
   })
 })

@@ -1,9 +1,10 @@
 import Consent from '../common/consent'
 
 export default class WebConsent implements Consent {
-  #confirmDialogId = 'automated-usage-tracking-tool-confirm-dialog'
-  #confirmButtonId = 'automated-usage-tracking-tool-confirm-button'
-  #declineButtonId = 'automated-usage-tracking-tool-decline-button'
+  #dialogId = 'automated-usage-tracking-tool-dialog'
+  #dialogContentId = `${this.#dialogId}-content`
+  #dialogConfirmButtonId = `${this.#dialogId}-confirm-button`
+  #dialogDeclineButtonId = `${this.#dialogId}-decline-button`
 
   askConsentConfirm(message: string = Consent.message) {
     // Only allows yes
@@ -22,38 +23,35 @@ export default class WebConsent implements Consent {
   #setDialog(confirmButtonHandler: EventListener, declineButtonHandler: EventListener | null, isConfirmDialog: boolean, message: string) {
     if (!this.#confirmDialogExists()) {
       this.#insertConfirmDialog(isConfirmDialog, message)
-      this.#setEventHandler(this.#getDialogButton(this.#confirmButtonId), 'click', confirmButtonHandler)
+      this.#setEventHandler(this.#getDialogButton(this.#dialogConfirmButtonId), 'click', confirmButtonHandler)
       this.#preventEscape()
       if (!isConfirmDialog) {
-        this.#setEventHandler(this.#getDialogButton(this.#declineButtonId), 'click', declineButtonHandler!)
+        this.#setEventHandler(this.#getDialogButton(this.#dialogDeclineButtonId), 'click', declineButtonHandler!)
       }
     }
     this.#getConfirmDialog().showModal()
   }
 
   #getConfirmDialogHTML(isConfirmDialog: boolean, message: string) {
+    const defaultWidth = '400px'
     if (isConfirmDialog) {
       return `
-        <div>
-          <dialog id=${this.#confirmDialogId} style="width:400px">
-          <div>${message}</div>
-              <button id=${this.#confirmButtonId}>Yes</button>
-          </dialog>
-        </div>`
+          <dialog id=${this.#dialogId} style="width:${defaultWidth}"> 
+          <div id=${this.#dialogContentId}>${message}</div>
+              <button id=${this.#dialogConfirmButtonId}>Yes</button>
+          </dialog>`
     } else {
       return `
-        <div>
-          <dialog id=${this.#confirmDialogId} style="width:400px">
-          <div>${message}</div>
-              <button id=${this.#confirmButtonId}>Yes</button>
-              <button id=${this.#declineButtonId}>No</button>
-          </dialog>
-        </div>`
+          <dialog id=${this.#dialogId} style="width:${defaultWidth}">
+          <div id=${this.#dialogContentId}>${message}</div>
+              <button id=${this.#dialogConfirmButtonId}>Yes</button>
+              <button id=${this.#dialogDeclineButtonId}>No</button>
+          </dialog>`
     }
   }
 
   #getConfirmDialog(): HTMLDialogElement {
-    return document.getElementById(this.#confirmDialogId) as HTMLDialogElement
+    return document.getElementById(this.#dialogId) as HTMLDialogElement
   }
 
   #getDialogButton(buttonId: string) {
@@ -65,7 +63,7 @@ export default class WebConsent implements Consent {
   }
 
   #confirmDialogExists() {
-    return document.getElementById(this.#confirmDialogId)
+    return document.getElementById(this.#dialogId)
   }
 
   #insertConfirmDialog(isConfirmDialog: boolean, message: string) {
