@@ -37,15 +37,15 @@ export default class WebConsent implements Consent {
     if (isConfirmDialog) {
       return `
           <dialog id=${this.#dialogId} style="width:${defaultWidth}"> 
-          <div id=${this.#dialogContentId}>${message}</div>
-              <button id=${this.#dialogConfirmButtonId}>Yes</button>
+            <div id=${this.#dialogContentId}>${message}</div>
+            <button id=${this.#dialogConfirmButtonId}>Yes</button>
           </dialog>`
     } else {
       return `
           <dialog id=${this.#dialogId} style="width:${defaultWidth}">
-          <div id=${this.#dialogContentId}>${message}</div>
-              <button id=${this.#dialogConfirmButtonId}>Yes</button>
-              <button id=${this.#dialogDeclineButtonId}>No</button>
+            <div id=${this.#dialogContentId}>${message}</div>
+            <button id=${this.#dialogConfirmButtonId}>Yes</button>
+            <button id=${this.#dialogDeclineButtonId}>No</button>
           </dialog>`
     }
   }
