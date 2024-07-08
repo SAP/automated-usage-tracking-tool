@@ -1,0 +1,17 @@
+.pipeline
+.reuse
+coverage
+LICENSES
+node_modules
+.gitignore
+.npmignore
+.prettierrc.json
+CONTRIBUTING.md
+eslint.config.mjs
+Jenkinsfile
+LICENSE
+package-lock.json
+renovate.json
+sonar-project.properties
+usageTracking
+vitest.config.ts

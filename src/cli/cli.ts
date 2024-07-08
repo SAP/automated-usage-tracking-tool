@@ -1,7 +1,7 @@
-import CliTracker from './cli/cliTracker'
-import { ConsentArguments, TrackUsageArguments, TrackerArguments } from './common/tracker'
+import CliTracker from './cliTracker'
+import { ConsentArguments, TrackUsageArguments, TrackerArguments } from '../common/tracker'
 
-export module api {
+export module cliApi {
   let tracker: CliTracker
 
   export function init(trackerArguments: TrackerArguments) {
@@ -20,4 +20,4 @@ export module api {
   }
 }
 
-export default api
+export default cliApi
