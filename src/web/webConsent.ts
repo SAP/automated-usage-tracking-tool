@@ -3,6 +3,7 @@ import Consent from '../common/consent'
 export default class WebConsent implements Consent {
   #dialogId = 'automated-usage-tracking-tool-dialog'
   #dialogContentId = `${this.#dialogId}-content`
+  #dialogFooterId = `${this.#dialogId}-footer`
   #dialogConfirmButtonId = `${this.#dialogId}-confirm-button`
   #dialogDeclineButtonId = `${this.#dialogId}-decline-button`
 
@@ -38,14 +39,18 @@ export default class WebConsent implements Consent {
       return `
           <dialog id=${this.#dialogId} style="width:${defaultWidth}"> 
             <div id=${this.#dialogContentId}>${message}</div>
-            <button id=${this.#dialogConfirmButtonId}>Yes</button>
+            <div id=${this.#dialogFooterId}>            
+              <button id=${this.#dialogConfirmButtonId}>Yes</button>
+            </div>
           </dialog>`
     } else {
       return `
           <dialog id=${this.#dialogId} style="width:${defaultWidth}">
             <div id=${this.#dialogContentId}>${message}</div>
-            <button id=${this.#dialogConfirmButtonId}>Yes</button>
-            <button id=${this.#dialogDeclineButtonId}>No</button>
+            <div id=${this.#dialogFooterId}>            
+              <button id=${this.#dialogConfirmButtonId}>Yes</button>
+              <button id=${this.#dialogDeclineButtonId}>No</button>
+            </div>
           </dialog>`
     }
   }
