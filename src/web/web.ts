@@ -18,6 +18,10 @@ export module webApi {
   export async function trackUsage(trackUsageArguments: TrackUsageArguments) {
     await tracker.trackUsage(trackUsageArguments)
   }
+
+  export function isConsentGranted(): boolean {
+    return tracker.storage.isConsentGranted()
+  }
 }
 
 export default webApi
