@@ -4,7 +4,7 @@
 
 ## About this project
 
-automated usage tracking tool is a user-centric data collection tool, using a Customer Data Cloud tenant, that tracks the usage of CX IAS's automation tools, generates comprehensive reports for evaluating tool effectiveness and improvements.
+The automated usage tracking tool is designed with a user-focused approach, utilizing a Customer Data Cloud tenant, to monitor the activity on Customer Experience Inovation and Automation's tools. Its purpose is to gather data on tool use, generate in-depth reports, and provide insights into tool performance and possible enhancements. This is an open source project as we believe in transparency and accessibility. The client code of the usage tracker should be easily accessible to users of the tools like https://github.com/SAP/sap-customer-data-cloud-toolkit and https://github.com/SAP/sap-customer-data-cloud-accelerator. 
 
 ## Requirements and Setup
 
