@@ -15,7 +15,7 @@
   flex-direction: column;
   width: 100%;
 }
-
+/* TODO: adjust css for #automated-usage-tracking-tool-dialog-decline-button */
 #automated-usage-tracking-tool-dialog-confirm-button {
   color: #fff;
   border-color: #0a6ed1;
