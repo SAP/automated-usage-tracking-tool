@@ -32,20 +32,20 @@ import trackingTool from '@sap_oss/automated-usage-tracking-tool'
 
 # Ask for consent confirmation or ask consent question
 
-await trackingTool.requestConsentConfirmation()
+    await trackingTool.requestConsentConfirmation()
 
-await trackingTool.requestConsentQuestion()
+    await trackingTool.requestConsentQuestion()
 
 # Track usages of your application features
 
     trackingTool.trackUsage({
-    toolName: [toolName],
-    featureName: [featureName],
+        toolName: [toolName],
+        featureName: [featureName],
     })
 
 # Check if consent was already granted
 
-trackingTool.isConsentGranted()
+    trackingTool.isConsentGranted()
 
 # For the web version, there is the option to import the sap_horizon theme to be applied to the consent dialog
 
@@ -53,11 +53,11 @@ import '@sap_oss/automated-usage-tracking-tool/styles/sap_horizon.css'
 
 # Aditional argument types are available for Typescript client applications
 
-import trackingTool, {
-TrackerArguments,
-TrackUsageArguments,
-ConsentArguments,
-} from "@sap_oss/automated-usage-tracking-tool";
+    import trackingTool, {
+        TrackerArguments,
+        TrackUsageArguments,
+        ConsentArguments,
+    } from "@sap_oss/automated-usage-tracking-tool";
 
 ## Support, Feedback, Contributing
 
