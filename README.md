@@ -8,7 +8,7 @@ automated usage tracking tool is a user-centric data collection tool, using a Cu
 
 ## Requirements and Setup
 
-This tool is ready to use by Javascript/Typescript client apps after importing and install it from NPM.
+This tool is ready to use by Javascript/Typescript client applicarions after importing and install it from NPM.
 
 ### Create a new project
 
@@ -19,63 +19,58 @@ npm init
 ### Install @sap_oss/automated-usage-tracking-tool as a dependency of the new project
 
 ```sh
-
 npm install @sap_oss/automated-usage-tracking-tool
 ```
 
 ### Import the default artifact
 
-```sh
+```js
 import trackingTool from '@sap_oss/automated-usage-tracking-tool'
 ```
 
 ### Initialize the tracker
 
-```sh
-    trackingTool.init({
-        apiKey: [apiKey],
-        dataCenter: [dataCenter],
-        storageName: [storageName],
-    })
+```js
+trackingTool.init({
+  apiKey: [apiKey],
+  dataCenter: [dataCenter],
+  storageName: [storageName],
+})
 ```
 
 ### Ask for consent confirmation or ask consent question
 
-```sh
-    await trackingTool.requestConsentConfirmation()
-
-    await trackingTool.requestConsentQuestion()
+```js
+await trackingTool.requestConsentConfirmation() // Answer: Yes (or exit app)
+// OR
+await trackingTool.requestConsentQuestion() // Answer: Yes or No
 ```
 
 ### Track usages of your application features
 
-```sh
-    trackingTool.trackUsage({
-        toolName: [toolName],
-        featureName: [featureName],
-    })
+```js
+trackingTool.trackUsage({
+  toolName: [toolName],
+  featureName: [featureName],
+})
 ```
 
 ### Check if consent was already granted
 
-```sh
-    trackingTool.isConsentGranted()
+```js
+trackingTool.isConsentGranted()
 ```
 
 ### For the web version, there is the option to import the sap_horizon theme to be applied to the consent dialog
 
-```sh
+```js
 import '@sap_oss/automated-usage-tracking-tool/styles/sap_horizon.css'
 ```
 
 ### Aditional argument types are available for Typescript client applications
 
-```sh
-    import trackingTool, {
-        TrackerArguments,
-        TrackUsageArguments,
-        ConsentArguments,
-    } from "@sap_oss/automated-usage-tracking-tool";
+```js
+import trackingTool, { TrackerArguments, TrackUsageArguments, ConsentArguments } from '@sap_oss/automated-usage-tracking-tool'
 ```
 
 ## Support, Feedback, Contributing
