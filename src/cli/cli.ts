@@ -15,8 +15,8 @@ export module cliApi {
     return await tracker.requestConsentConfirmation(consentArguments)
   }
 
-  export function trackUsage(trackUsageArguments: TrackUsageArguments): void {
-    tracker.trackUsage(trackUsageArguments)
+  export async function trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void> {
+    return await tracker.trackUsage(trackUsageArguments)
   }
 
   export function isConsentGranted(): boolean {

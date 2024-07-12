@@ -15,8 +15,8 @@ export module webApi {
     return await tracker.requestConsentConfirmation(consentArguments)
   }
 
-  export async function trackUsage(trackUsageArguments: TrackUsageArguments) {
-    await tracker.trackUsage(trackUsageArguments)
+  export async function trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void> {
+    return await tracker.trackUsage(trackUsageArguments)
   }
 
   export function isConsentGranted(): boolean {

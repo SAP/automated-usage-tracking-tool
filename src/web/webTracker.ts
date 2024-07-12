@@ -42,7 +42,7 @@ export default class WebTracker implements Tracker {
     if (!this.storage.isConsentGranted()) {
       const consent = await consentFunction(consentArguments.message)
       if (consent) {
-        const email: string = consentArguments.email ? consentArguments.email : crypto.randomUUID() + '@usageTrackingTool.com'
+        const email: string = consentArguments.email ? consentArguments.email : crypto.randomUUID() + '@automated-usage-tracking-tool.sap'
         this.storage.setConsentGranted(consent, email)
         await this.account.setConsent(consent, email)
       }
