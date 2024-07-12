@@ -8,13 +8,77 @@ The automated usage tracking tool is designed with a user-focused approach, util
 
 ## Requirements and Setup
 
-*Insert a short description what is required to get your project running...*
+This tool is ready to use by Javascript/Typescript client applicarions after importing and install it from NPM.
+
+### Create a new project
+
+```sh
+npm init
+```
+
+### Install @sap_oss/automated-usage-tracking-tool as a dependency of the new project
+
+```sh
+npm install @sap_oss/automated-usage-tracking-tool
+```
+
+### Import the default artifact
+
+```js
+import trackingTool from '@sap_oss/automated-usage-tracking-tool'
+```
+
+### Initialize the tracker
+
+```js
+trackingTool.init({
+  apiKey: [apiKey],
+  dataCenter: [dataCenter],
+  storageName: [storageName],
+})
+```
+
+### Ask for consent confirmation or ask consent question
+
+```js
+await trackingTool.requestConsentConfirmation() // Answer: Yes (or exit app)
+// OR
+await trackingTool.requestConsentQuestion() // Answer: Yes or No
+```
+
+### Track usages of your application features
+
+```js
+trackingTool.trackUsage({
+  toolName: [toolName],
+  featureName: [featureName],
+})
+```
+
+### Check if consent was already granted
+
+```js
+trackingTool.isConsentGranted()
+```
+
+### For the web version, there is the option to import the sap_horizon theme to be applied to the consent dialog
+
+```js
+import '@sap_oss/automated-usage-tracking-tool/styles/sap_horizon.css'
+```
+
+### Aditional argument types are available for Typescript client applications
+
+```js
+import trackingTool, { TrackerArguments, TrackUsageArguments, ConsentArguments } from '@sap_oss/automated-usage-tracking-tool'
+```
 
 ## Support, Feedback, Contributing
 
 This project is open to feature requests/suggestions, bug reports etc. via [GitHub issues](https://github.com/SAP/automated-usage-tracking-tool/issues). Contribution and feedback are encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our [Contribution Guidelines](CONTRIBUTING.md).
 
 ## Security / Disclosure
+
 If you find any bug that may be a security problem, please follow our instructions at [in our security policy](https://github.com/SAP/automated-usage-tracking-tool/security/policy) on how to report it. Please do not create GitHub issues for security-related doubts or problems.
 
 ## Code of Conduct

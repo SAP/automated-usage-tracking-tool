@@ -7,16 +7,20 @@ export module webApi {
   export function init(trackerArguments: TrackerArguments) {
     tracker = new WebTracker(trackerArguments)
   }
-  export async function requestConsentQuestion(consentArguments: ConsentArguments, message: string): Promise<boolean> {
+  export async function requestConsentQuestion(consentArguments: ConsentArguments = {}): Promise<boolean> {
     return await tracker.requestConsentQuestion(consentArguments)
   }
 
-  export async function requestConsentConfirmation(consentArguments: ConsentArguments, message: string): Promise<boolean> {
+  export async function requestConsentConfirmation(consentArguments: ConsentArguments = {}): Promise<boolean> {
     return await tracker.requestConsentConfirmation(consentArguments)
   }
 
   export async function trackUsage(trackUsageArguments: TrackUsageArguments) {
     await tracker.trackUsage(trackUsageArguments)
+  }
+
+  export function isConsentGranted(): boolean {
+    return tracker.storage.isConsentGranted()
   }
 }
 

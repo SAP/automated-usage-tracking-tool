@@ -1,0 +1,32 @@
+#automated-usage-tracking-tool-dialog {
+  width: 500px;
+  border-radius: 5px;
+  border-color: #fff;
+}
+
+#automated-usage-tracking-tool-dialog-content {
+  padding: 8px;
+  font-family: '72override', '72', '72full', Arial, Helvetica, sans-serif;
+  font-size: 0.875rem;
+}
+
+#automated-usage-tracking-tool-dialog-footer {
+  display: inline-flex;
+  flex-direction: column;
+  width: 100%;
+}
+/* TODO: adjust css for #automated-usage-tracking-tool-dialog-decline-button */
+#automated-usage-tracking-tool-dialog-confirm-button {
+  color: #fff;
+  border-color: #0a6ed1;
+  background-color: #0a6ed1;
+  border-radius: 0.25rem;
+  min-width: 3.25rem;
+  height: 2.25rem;
+  font-family: '72override', '72', '72full', Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  outline: auto;
+  margin-top: 8px;
+  align-self: end;
+}

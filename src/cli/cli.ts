@@ -18,6 +18,10 @@ export module cliApi {
   export function trackUsage(trackUsageArguments: TrackUsageArguments): void {
     tracker.trackUsage(trackUsageArguments)
   }
+
+  export function isConsentGranted(): boolean {
+    return tracker.storage.isConsentGranted()
+  }
 }
 
 export default cliApi
