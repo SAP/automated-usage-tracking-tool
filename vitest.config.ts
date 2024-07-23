@@ -5,7 +5,7 @@ export default defineConfig({
     coverage: {
       reporter: ['text', 'lcov'],
       reportsDirectory: '../coverage',
-      exclude: [...configDefaults.exclude, '**/*.test.ts', '**/*.dataTest.ts'],
+      exclude: [...configDefaults.exclude, '**/*.test.ts', '**/*.dataTest.ts', '**/index.ts', '**/cli/cli.ts', '**/web/web.ts'],
     },
   },
 })
