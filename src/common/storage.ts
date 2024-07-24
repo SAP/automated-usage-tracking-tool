@@ -47,6 +47,7 @@ export default abstract class Storage {
     return this.email
   }
 
+  protected abstract initStorage(): void
   protected abstract read(): Storage
   protected abstract write(): void
 
