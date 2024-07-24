@@ -1,7 +1,7 @@
 import Consent from '../common/consent'
 import readline from 'readline'
 
-export class CliConsent extends Consent {
+export default class CliConsent extends Consent {
   #cliMessage: string = `${Consent.message} (Y/n)`
   askConsentConfirm = (msg = this.#cliMessage) => {
     const rl = readline.createInterface({

@@ -1,13 +1,52 @@
 import Storage from './storage'
+import Account from '../gigya/account'
+import Consent from './consent'
 
-export default interface Tracker {
+export default abstract class Tracker {
   apiKey: string
+  dataCenter: string
   storage: Storage
+  account: Account
+  consent: Consent
 
-  requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean>
-  requestConsentConfirmation(consentArguments: ConsentArguments): Promise<boolean>
-  trackUsage(trackUsageArguments: TrackUsageArguments): void
+  constructor(trackerArguments: TrackerArguments, storage: Storage, consent: Consent) {
+    this.apiKey = trackerArguments.apiKey
+    this.dataCenter = trackerArguments.dataCenter
+    this.account = new Account(this.apiKey, this.dataCenter)
+    this.storage = storage
+    this.consent = consent
+  }
+
+  async requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.requestConsent(this.consent.askConsentQuestion.bind(this.consent), consentArguments)
+  }
+
+  async requestConsentConfirmation(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.requestConsent(this.consent.askConsentConfirm.bind(this.consent), consentArguments)
+  }
+
+  async trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void> {
+    if (this.storage.isConsentGranted()) {
+      this.storage.setLatestUsage(trackUsageArguments.toolName, trackUsageArguments.featureName)
+      await this.account.setLatestUsages(this.storage.getEmail(), this.storage.getLatestUsages())
+    }
+  }
+
+  private async requestConsent(consentFunction: ConsentFunction, consentArguments: ConsentArguments): Promise<boolean> {
+    if (!this.storage.isConsentGranted()) {
+      const consent = await consentFunction(consentArguments.message)
+      if (consent) {
+        const email: string = consentArguments.email ? consentArguments.email : crypto.randomUUID() + '@automated-usage-tracking-tool.sap'
+        this.storage.setConsentGranted(consent, email)
+        await this.account.setConsent(consent, email)
+      }
+      return consent
+    }
+    return true
+  }
 }
+
+type ConsentFunction = (message?: string) => Promise<boolean>
 
 export interface TrackerArguments {
   apiKey: string

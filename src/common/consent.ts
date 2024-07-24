@@ -4,6 +4,6 @@ export default abstract class Consent {
     ' By installing this app, you agree to share this information with SAP.' +
     ' If you wish to revoke your consent, please uninstall the app. Do you want to continue?'
 
-  abstract askConsentConfirm(): void
-  abstract askConsentQuestion(): void
+  abstract askConsentConfirm(): Promise<boolean>
+  abstract askConsentQuestion(): Promise<boolean>
 }
