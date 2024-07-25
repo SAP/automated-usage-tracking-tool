@@ -8,6 +8,8 @@ interface Params {
 
 export default class Account {
   token: string
+  accountEndpointBaseUrl: string
+
   constructor(
     private apiKey: string,
     private dataCenter: string,
@@ -15,6 +17,18 @@ export default class Account {
     this.apiKey = apiKey
     this.dataCenter = dataCenter
     this.token = ''
+    this.accountEndpointBaseUrl = this.getAccountBaseUrl()
+  }
+
+  private getAccountBaseUrl(): string {
+    const protocol = 'https'
+    const namespace = 'accounts'
+    const domain = 'gigya.com'
+    return `${protocol}://${namespace}.${this.dataCenter}.${domain}/${namespace}.`
+  }
+
+  private buildAccountEndpoint(endpoint: string): string {
+    return `${this.accountEndpointBaseUrl}${endpoint}`
   }
 
   async getToken(): Promise<string> {
@@ -22,7 +36,7 @@ export default class Account {
       apiKey: this.apiKey,
       isLite: true,
     }
-    const response = await Gigya.getInstance().request(`https://accounts.${this.dataCenter}.gigya.com/accounts.initRegistration`, body)
+    const response = await Gigya.getInstance().request(this.buildAccountEndpoint('initRegistration'), body)
     if (response.errorCode !== 0 || !response.regToken) {
       return Promise.reject(new Error('Error getting token. ' + (response.errorDetails ? response.errorDetails : response.errorMessage)))
     }
@@ -48,7 +62,7 @@ export default class Account {
       },
     })
 
-    let response = await Gigya.getInstance().request(`https://accounts.${this.dataCenter}.gigya.com/accounts.setAccountInfo`, body)
+    let response = await Gigya.getInstance().request(this.buildAccountEndpoint('setAccountInfo'), body)
     if (response.errorCode === 400006) {
       // token expired
       this.token = ''
@@ -72,7 +86,7 @@ export default class Account {
     }
     body.data = JSON.stringify({ latestUsages: usages })
 
-    let response = await Gigya.getInstance().request(`https://accounts.${this.dataCenter}.gigya.com/accounts.setAccountInfo`, body)
+    let response = await Gigya.getInstance().request(this.buildAccountEndpoint('setAccountInfo'), body)
     if (response.errorCode === 400006) {
       // token expired
       this.token = ''

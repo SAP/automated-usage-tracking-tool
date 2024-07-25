@@ -1,9 +1,10 @@
 import Consent from '../common/consent'
 import readline from 'readline'
 
-export class CliConsent extends Consent {
-  #cliMessage: string = `${Consent.message} (Y/n)`
-  askConsentConfirm = (msg = this.#cliMessage) => {
+export default class CliConsent extends Consent {
+  private cliMessage: string = `${Consent.message} (Y/n)`
+
+  askConsentConfirm = (msg = this.cliMessage) => {
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
@@ -16,7 +17,7 @@ export class CliConsent extends Consent {
     })
   }
 
-  askConsentQuestion = (msg = this.#cliMessage) => {
+  askConsentQuestion = (msg = this.cliMessage) => {
     const rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,

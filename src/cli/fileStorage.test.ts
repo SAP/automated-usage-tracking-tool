@@ -76,7 +76,7 @@ describe('File Storage', () => {
 
   test('is consent granted', () => {
     consent = true
-    vi.spyOn(fs, 'readFileSync').mockReturnValue(getFileContentWithEmptyUsages())
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(btoa(getFileContentWithEmptyUsages()))
     storage = new FileStorage(storageLocation)
     expect(storage.isConsentGranted()).toBeTruthy()
   })
@@ -84,7 +84,7 @@ describe('File Storage', () => {
   test('set latest usage', () => {
     consent = true
     vi.spyOn(uuid, 'v4').mockReturnValue('id')
-    vi.spyOn(fs, 'readFileSync').mockReturnValue(`{${getFileContentExceptUsages()},"latestUsages":[${getFileUsage('2020-02-01T13:58:00.000Z')}]}`)
+    vi.spyOn(fs, 'readFileSync').mockReturnValue(btoa(`{${getFileContentExceptUsages()},"latestUsages":[${getFileUsage('2020-02-01T13:58:00.000Z')}]}`))
     storage = new FileStorage(storageLocation)
 
     // add an old usage that will be filtered out next time

@@ -1,45 +1,27 @@
 /// <reference path="../../node_modules/@types/node/fs.d.ts" />
 import Storage from '../common/storage'
 import fs from 'fs'
-import Usage from '../common/usage'
 
 export default class FileStorage extends Storage {
   constructor(location: string) {
     super(location)
-    this.#initStorage()
+    this.initStorage()
   }
 
-  #initStorage(): void {
+  protected initStorage(): void {
     fs.openSync(this.location, 'a+')
-    this.#read()
+    this.read()
   }
 
-  #read(): Storage {
+  protected read(): Storage {
     const content: Buffer = fs.readFileSync(this.location)
-    return this.toStorage(content.toString())
+    if (null === content || undefined === content) {
+      return this
+    }
+    return this.toStorage(atob(content.toString()))
   }
 
-  #write(): void {
-    fs.writeFileSync(this.location, this.toString())
-  }
-
-  setConsentGranted(consent: boolean, email: string): void {
-    this.consentGranted = consent
-    this.email = email
-    this.#write()
-  }
-
-  setLatestUsage(toolName: string, featureName?: string): void {
-    this.#filterLatestUsages()
-    const usage = new Usage(toolName, featureName)
-    this.latestUsages.push(usage)
-    this.#write()
-  }
-
-  #filterLatestUsages(): void {
-    this.latestUsages = this.latestUsages.filter((usage) => {
-      const THIRTY_MINUTES: number = 30 * 60 * 1000 // ms
-      return Math.abs(new Date().getTime() - new Date(usage.createdAt).getTime()) < THIRTY_MINUTES
-    })
+  protected write(): void {
+    fs.writeFileSync(this.location, btoa(this.toString()))
   }
 }

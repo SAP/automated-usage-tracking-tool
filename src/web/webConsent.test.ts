@@ -1,4 +1,4 @@
-import { describe, test, beforeEach, beforeAll, afterAll, expect, vi, afterEach } from 'vitest'
+import { describe, test, beforeEach, expect, vi, afterEach } from 'vitest'
 import WebConsent from './webConsent'
 
 // @vitest-environment jsdom

@@ -35,24 +35,15 @@ export default class WebConsent implements Consent {
 
   #getConfirmDialogHTML(isConfirmDialog: boolean, message: string) {
     const defaultWidth = '400px'
-    if (isConfirmDialog) {
-      return `
+    const declineButtonHtml = isConfirmDialog ? '' : `<button id=${this.#dialogDeclineButtonId}>No</button>`
+    return `
           <dialog id=${this.#dialogId} style="width:${defaultWidth}"> 
             <div id=${this.#dialogContentId}>${message}</div>
             <div id=${this.#dialogFooterId}>            
               <button id=${this.#dialogConfirmButtonId}>Yes</button>
+              ${declineButtonHtml}
             </div>
           </dialog>`
-    } else {
-      return `
-          <dialog id=${this.#dialogId} style="width:${defaultWidth}">
-            <div id=${this.#dialogContentId}>${message}</div>
-            <div id=${this.#dialogFooterId}>            
-              <button id=${this.#dialogConfirmButtonId}>Yes</button>
-              <button id=${this.#dialogDeclineButtonId}>No</button>
-            </div>
-          </dialog>`
-    }
   }
 
   #getConfirmDialog(): HTMLDialogElement {

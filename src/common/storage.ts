@@ -47,7 +47,27 @@ export default abstract class Storage {
     return this.email
   }
 
-  abstract setConsentGranted(consent: boolean, email: string): void
+  protected abstract initStorage(): void
+  protected abstract read(): Storage
+  protected abstract write(): void
 
-  abstract setLatestUsage(toolName: string, featureName?: string): void
+  setConsentGranted(consent: boolean, email: string): void {
+    this.consentGranted = consent
+    this.email = email
+    this.write()
+  }
+
+  setLatestUsage(toolName: string, featureName?: string): void {
+    this.filterLatestUsages()
+    const usage = new Usage(toolName, featureName)
+    this.latestUsages.push(usage)
+    this.write()
+  }
+
+  protected filterLatestUsages(): void {
+    this.latestUsages = this.latestUsages.filter((usage) => {
+      const THIRTY_MINUTES: number = 30 * 60 * 1000 // ms
+      return Math.abs(new Date().getTime() - new Date(usage.createdAt).getTime()) < THIRTY_MINUTES
+    })
+  }
 }
