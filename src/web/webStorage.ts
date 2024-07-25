@@ -1,5 +1,4 @@
 import Storage from '../common/storage'
-import Usage from '../common/usage'
 
 export default class WebStorage extends Storage {
   constructor(location: string) {

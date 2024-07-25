@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest'
 import mockStdin from 'mock-stdin'
-import { CliConsent } from './cliConsent'
+import CliConsent from './cliConsent'
 
 describe.skip('Cli consent', () => {
   let stdin: ReturnType<typeof mockStdin.stdin>

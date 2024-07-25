@@ -34,13 +34,13 @@ export default abstract class Tracker {
 
   private async requestConsent(consentFunction: ConsentFunction, consentArguments: ConsentArguments): Promise<boolean> {
     if (!this.storage.isConsentGranted()) {
-      const consent = await consentFunction(consentArguments.message)
-      if (consent) {
+      const consentResponse = await consentFunction(consentArguments.message)
+      if (consentResponse) {
         const email: string = consentArguments.email ? consentArguments.email : crypto.randomUUID() + '@automated-usage-tracking-tool.sap'
-        this.storage.setConsentGranted(consent, email)
-        await this.account.setConsent(consent, email)
+        this.storage.setConsentGranted(consentResponse, email)
+        await this.account.setConsent(consentResponse, email)
       }
-      return consent
+      return consentResponse
     }
     return true
   }
