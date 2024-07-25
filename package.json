@@ -1,13 +1,13 @@
 {
   "name": "@sap_oss/automated-usage-tracking-tool",
-  "version": "0.0.1",
+  "version": "0.0.1-20240725171949+728923f202c05696e53cfab895df6d9e18be3028",
   "description": "Automated usage tracking tool is a user-centric data collection tool, using a Customer Data Cloud tenant, that tracks the usage of CX IAS's automation tools, generates comprehensive reports for evaluating tool effectiveness and improvements.",
   "main": "dist/cli/index.js",
   "browser": "dist/web/index.js",
   "module": "dist/web/index.js",
   "types": "dist/cli/index.d.ts",
   "scripts": {
-    "build": "npm run build:cli && npm run build:web",
+    "build": "npm run build:cli \u0026\u0026 npm run build:web",
     "build:cli": "tsc --build src/cli",
     "build:web": "tsc --build src/web",
     "lint": "eslint ./src",
