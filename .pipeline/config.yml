@@ -38,7 +38,7 @@ steps:
     projectName: 'automated-usage-tracking-tool'
     teamName: '/CxServer/SP/SAP/PI/SMEDevelopmentSupport/SMECoreB1Program'
     preset: 'SAP_Corp_JavaScript_Client' # https://github.wdf.sap.corp/pages/Security-Testing/doc/checkmarx/Presets/
-    filterPattern: '!**/node_modules/**, !**/.xmake/**, !**/coverage/**, !**/dist/**, !**/__tests__/**, !bom-npm.xml, **/src/**, **/*.html, **/*.xml, **/*.js, **/*.ts'
+    filterPattern: '!**/node_modules/**, !**/.xmake/**, !**/coverage/**, !**/dist/**, !**/__tests__/**, !bom-npm.xml, !**/tsconfig.json, !**/*.test.ts, **/src/**, **/*.html, **/*.xml, **/*.js, **/*.ts'
   sapCumulusUpload:
     pipelineId: '917501e3-d9c2-4ba9-be50-c8baf4ff0266'
   handlePipelineStepErrors:
