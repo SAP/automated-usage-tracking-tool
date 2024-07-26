@@ -1,0 +1,83 @@
+#automated-usage-tracking-tool-dialog * {
+  font-family: '72override', '72', '72full', Arial, Helvetica, sans-serif;
+}
+#automated-usage-tracking-tool-dialog::backdrop {
+  background-color: #000;
+  opacity: 0.6;
+}
+#automated-usage-tracking-tool-dialog {
+  width: 500px;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #1d2d3e;
+  border: none;
+  padding: 0;
+  border-radius: 0.75rem;
+  box-shadow:
+    0 0 0 0.0625rem rgba(34, 53, 72, 0.48),
+    0 1.25rem 5rem 0 rgba(34, 53, 72, 0.25);
+}
+
+#automated-usage-tracking-tool-dialog-content {
+  margin: 1rem;
+}
+
+#automated-usage-tracking-tool-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  border-top: 0.0625rem solid #d9d9d9;
+}
+
+#automated-usage-tracking-tool-dialog-footer button {
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  height: 34px;
+  max-height: 34px;
+  min-width: 4rem;
+  border-radius: 0.5rem;
+  border: 1px solid transparent;
+  padding: 0 4px;
+}
+
+#automated-usage-tracking-tool-dialog-footer button:focus:after {
+  border-width: 0.125rem;
+  border-style: solid;
+  border-radius: calc(0.5rem - 0.125rem);
+  content: '';
+  display: block;
+  position: absolute;
+  bottom: 2px;
+  left: 2px;
+  right: 2px;
+  top: 2px;
+}
+
+#automated-usage-tracking-tool-dialog-confirm-button {
+  background-color: #0070f2;
+  border-color: #0070f2;
+  color: #fff;
+  font-weight: bold;
+}
+#automated-usage-tracking-tool-dialog-confirm-button:hover {
+  background-color: #0064d9;
+  border-color: #0064d9;
+}
+#automated-usage-tracking-tool-dialog-confirm-button:focus:after {
+  border-color: #fff;
+}
+
+#automated-usage-tracking-tool-dialog-decline-button {
+  color: #0064d9;
+  background-color: transparent;
+}
+#automated-usage-tracking-tool-dialog-decline-button:hover {
+  border-color: #bcc3ca;
+  background-color: #eaecee;
+}
+#automated-usage-tracking-tool-dialog-decline-button:focus:after {
+  border-color: #0064d9;
+}
