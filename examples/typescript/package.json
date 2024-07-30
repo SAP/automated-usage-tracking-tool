@@ -1,0 +1,14 @@
+{
+  "name": "typescript-client",
+  "version": "1.0.0",
+  "description": "Example of an integration of the automated-usage-tracking-tool with a typescript client app.",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}
