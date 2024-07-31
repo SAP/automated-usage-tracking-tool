@@ -1,0 +1,20 @@
+{
+  "name": "javascript-cli-client",
+  "version": "1.0.0",
+  "description": "Example of an integration of the automated-usage-tracking-tool with a javascript cli client app.",
+  "main": "index.js",
+  "scripts": {
+    "start": "./node_modules/.bin/babel src --out-dir dist && node dist/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.24.8",
+    "@babel/core": "^7.25.2",
+    "@babel/preset-env": "^7.25.2"
+  },
+  "dependencies": {
+    "core-js": "^3.37.1",
+    "@sap_oss/automated-usage-tracking-tool": "^1.0.0"
+  }
+}

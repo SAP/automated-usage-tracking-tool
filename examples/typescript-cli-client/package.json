@@ -4,11 +4,12 @@
   "description": "Example of an integration of the automated-usage-tracking-tool with a typescript client app.",
   "main": "src/index.ts",
   "scripts": {
-    "build": "tsc"
+    "start": "tsc && node dist/index.js"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "@sap_oss/automated-usage-tracking-tool": "^1.0.0"
   }
 }
