@@ -47,3 +47,4 @@ steps:
     runScripts:
       - test
     failOnError: true
+    buildDescriptorList: ['./package.json']
