@@ -1,27 +1,26 @@
 import WebTracker from './webTracker'
 import { ConsentArguments, TrackUsageArguments, TrackerArguments } from '../common/tracker'
 
-export module webApi {
-  let tracker: WebTracker
+export default class Web {
+  private tracker: WebTracker
 
-  export function init(trackerArguments: TrackerArguments) {
-    tracker = new WebTracker(trackerArguments)
-  }
-  export async function requestConsentQuestion(consentArguments: ConsentArguments = {}): Promise<boolean> {
-    return await tracker.requestConsentQuestion(consentArguments)
+  constructor(trackerArguments: TrackerArguments) {
+    this.tracker = new WebTracker(trackerArguments)
   }
 
-  export async function requestConsentConfirmation(consentArguments: ConsentArguments = {}): Promise<boolean> {
-    return await tracker.requestConsentConfirmation(consentArguments)
+  async requestConsentQuestion(consentArguments: ConsentArguments = {}): Promise<boolean> {
+    return await this.tracker.requestConsentQuestion(consentArguments)
   }
 
-  export async function trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void> {
-    return await tracker.trackUsage(trackUsageArguments)
+  async requestConsentConfirmation(consentArguments: ConsentArguments = {}): Promise<boolean> {
+    return await this.tracker.requestConsentConfirmation(consentArguments)
   }
 
-  export function isConsentGranted(): boolean {
-    return tracker.storage.isConsentGranted()
+  async trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void> {
+    return await this.tracker.trackUsage(trackUsageArguments)
+  }
+
+  isConsentGranted(): boolean {
+    return this.tracker.storage.isConsentGranted()
   }
 }
-
-export default webApi

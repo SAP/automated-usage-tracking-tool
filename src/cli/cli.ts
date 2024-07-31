@@ -1,27 +1,26 @@
 import CliTracker from './cliTracker'
 import { ConsentArguments, TrackUsageArguments, TrackerArguments } from '../common/tracker'
 
-export module cliApi {
-  let tracker: CliTracker
+export default class Cli {
+  private tracker: CliTracker
 
-  export function init(trackerArguments: TrackerArguments) {
-    tracker = new CliTracker(trackerArguments)
-  }
-  export async function requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean> {
-    return await tracker.requestConsentQuestion(consentArguments)
+  constructor(trackerArguments: TrackerArguments) {
+    this.tracker = new CliTracker(trackerArguments)
   }
 
-  export async function requestConsentConfirmation(consentArguments: ConsentArguments): Promise<boolean> {
-    return await tracker.requestConsentConfirmation(consentArguments)
+  async requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.tracker.requestConsentQuestion(consentArguments)
   }
 
-  export async function trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void> {
-    return await tracker.trackUsage(trackUsageArguments)
+  async requestConsentConfirmation(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.tracker.requestConsentConfirmation(consentArguments)
   }
 
-  export function isConsentGranted(): boolean {
-    return tracker.storage.isConsentGranted()
+  async trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void> {
+    return await this.tracker.trackUsage(trackUsageArguments)
+  }
+
+  isConsentGranted(): boolean {
+    return this.tracker.storage.isConsentGranted()
   }
 }
-
-export default cliApi

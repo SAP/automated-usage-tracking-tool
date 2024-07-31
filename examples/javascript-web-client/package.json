@@ -1,0 +1,16 @@
+{
+  "name": "javascript-web-client",
+  "version": "1.0.0",
+  "description": "Example of an integration of the automated-usage-tracking-tool with a javascript web client app. ",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4",
+    "@sap_oss/automated-usage-tracking-tool": "^1.0.0"
+  }
+}
