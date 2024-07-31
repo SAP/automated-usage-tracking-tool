@@ -1,10 +1,5 @@
 import CliTracker from '@sap_oss/automated-usage-tracking-tool'
 
-// trackingTool.init({
-//   apiKey: '4_TCuGT23_GS-FxSIFf3YNdQ',
-//   dataCenter: 'eu1',
-// })
-
 const trackingTool = new CliTracker({
   apiKey: '4_TCuGT23_GS-FxSIFf3YNdQ',
   dataCenter: 'eu1',
