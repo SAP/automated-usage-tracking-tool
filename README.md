@@ -4,7 +4,7 @@
 
 ## About this project
 
-The automated usage tracking tool is designed with a user-focused approach, utilizing a Customer Data Cloud tenant, to monitor the activity on Customer Experience Inovation and Automation's tools. Its purpose is to gather data on tool use, generate in-depth reports, and provide insights into tool performance and possible enhancements. This is an open source project as we believe in transparency and accessibility. The client code of the usage tracker should be easily accessible to users of the tools like https://github.com/SAP/sap-customer-data-cloud-toolkit and https://github.com/SAP/sap-customer-data-cloud-accelerator. 
+The automated usage tracking tool is designed with a user-focused approach, utilizing a Customer Data Cloud tenant, to monitor the activity on Customer Experience Inovation and Automation's tools. Its purpose is to gather data on tool use, generate in-depth reports, and provide insights into tool performance and possible enhancements. This is an open source project as we believe in transparency and accessibility. The client code of the usage tracker should be easily accessible to users of the tools like https://github.com/SAP/sap-customer-data-cloud-toolkit and https://github.com/SAP/sap-customer-data-cloud-accelerator.
 
 ## Requirements and Setup
 
@@ -25,16 +25,16 @@ npm install @sap_oss/automated-usage-tracking-tool
 ### Import the default artifact
 
 ```js
-import trackingTool from '@sap_oss/automated-usage-tracking-tool'
+import TrackingTool from '@sap_oss/automated-usage-tracking-tool'
 ```
 
 ### Initialize the tracker
 
 ```js
-trackingTool.init({
+const trackingTool = new TrackingTool({
   apiKey: [apiKey],
   dataCenter: [dataCenter],
-  storageName: [storageName],
+  storageName: [storageName], // Optional
 })
 ```
 
@@ -64,14 +64,18 @@ trackingTool.isConsentGranted()
 ### For the web version, there is the option to import the sap_horizon theme to be applied to the consent dialog
 
 ```js
-import '@sap_oss/automated-usage-tracking-tool/styles/sap_horizon.css'
+import '@sap_oss/automated-usage-tracking-tool/theme/sap_horizon.css'
 ```
 
 ### Aditional argument types are available for Typescript client applications
 
 ```js
-import trackingTool, { TrackerArguments, TrackUsageArguments, ConsentArguments } from '@sap_oss/automated-usage-tracking-tool'
+import { TrackerArguments, TrackUsageArguments, ConsentArguments } from '@sap_oss/automated-usage-tracking-tool'
 ```
+
+### Usage examples
+
+On the /examples folder there are available example Javascript and Typescript Web and CLI client apps using the tool.
 
 ## Support, Feedback, Contributing
 
