@@ -17,8 +17,9 @@ stages:
     hadolintExecute: false
     sonarExecuteScan: true
     npmExecuteScripts: true
+  Additional Unit Tests:
+    karmaExecuteTests: '**/examples/typescript-web-client/karma.conf.js'
 steps:
-  karmaExecuteTests: '**/examples/typescript-web-client/karma.conf.js'
   artifactPrepareVersion:
     gitHttpsCredentialVaultSecretName: 'GROUP-SECRETS/sap-customer-data-cloud-accelerator-github'
   executeBuild:
