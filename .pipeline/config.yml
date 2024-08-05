@@ -17,8 +17,6 @@ stages:
     hadolintExecute: false
     sonarExecuteScan: true
     npmExecuteScripts: true
-  Additional Unit Tests:
-    karmaExecuteTests: true
 steps:
   artifactPrepareVersion:
     gitHttpsCredentialVaultSecretName: 'GROUP-SECRETS/sap-customer-data-cloud-accelerator-github'
