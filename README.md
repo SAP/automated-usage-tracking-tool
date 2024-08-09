@@ -1,14 +1,24 @@
 [![REUSE status](https://api.reuse.software/badge/github.com/SAP/automated-usage-tracking-tool)](https://api.reuse.software/info/github.com/SAP/automated-usage-tracking-tool)
 
-# automated usage tracking tool
+# Automated Usage Tracking Tool
 
 ## About this project
 
-The automated usage tracking tool is designed with a user-focused approach, utilizing a Customer Data Cloud tenant, to monitor the activity on Customer Experience Inovation and Automation's tools. Its purpose is to gather data on tool use, generate in-depth reports, and provide insights into tool performance and possible enhancements. This is an open source project as we believe in transparency and accessibility. The client code of the usage tracker should be easily accessible to users of the tools like https://github.com/SAP/sap-customer-data-cloud-toolkit and https://github.com/SAP/sap-customer-data-cloud-accelerator.
+The Automated Usage Tracking Tool is designed to help developers track user interactions within their JavaScript and TypeScript applications using [SAP Customer Data Cloud](https://help.sap.com/docs/SAP_CUSTOMER_DATA_CLOUD).
+
+By integrating this tool, you can gather insights into how users interact with various features of your application, which can be invaluable for improving user experience and making data-driven decisions.
+
+### Key features
+
+- **Consent Management**: The tool provides built-in methods to request user consent for tracking, ensuring compliance with privacy regulations.
+- **Feature Usage Tracking**: Easily track how often specific features of your application are used.
+- **Customizable Storage**: Optionally specify a custom storage name for tracking data.
+- **Web and CLI Support**: The tool supports both web and command-line interface (CLI) applications.
+- **Theme Support**: For web applications, you can apply the [`sap_horizon`](#themes) theme to the consent dialog for a consistent look and feel.
 
 ## Requirements and Setup
 
-This tool is ready to use by Javascript/Typescript client applicarions after importing and install it from NPM.
+This tool is ready to use by JavaScript/Typescript client applications after importing and installing it from NPM.
 
 ### Create a new project
 
@@ -16,13 +26,17 @@ This tool is ready to use by Javascript/Typescript client applicarions after imp
 npm init
 ```
 
-### Install @sap_oss/automated-usage-tracking-tool as a dependency of the new project
+### Install package
+
+Install @sap_oss/automated-usage-tracking-tool as a dependency of the new project
 
 ```sh
 npm install @sap_oss/automated-usage-tracking-tool
 ```
 
-### Import the default artifact
+### Import the package
+
+Import the default artifact
 
 ```js
 import TrackingTool from '@sap_oss/automated-usage-tracking-tool'
@@ -38,15 +52,23 @@ const trackingTool = new TrackingTool({
 })
 ```
 
-### Ask for consent confirmation or ask consent question
+### Request Consent
+
+Ask for consent confirmation or ask the consent question to the user.
+
+**Note:** If the consent was already granted, the consent dialog will not be shown (no extra validations needed).
 
 ```js
-await trackingTool.requestConsentConfirmation() // Answer: Yes (or exit app)
+await trackingTool.requestConsentConfirmation() // Possible Answer: Yes (or exit app)
 // OR
-await trackingTool.requestConsentQuestion() // Answer: Yes or No
+await trackingTool.requestConsentQuestion() // Possible Answers: Yes or No
 ```
 
-### Track usages of your application features
+### Track Usages
+
+Track usages of your application features.
+
+**Note**: If the consent was not granted, the usage will not be tracked (no extra validations needed).
 
 ```js
 trackingTool.trackUsage({
@@ -55,27 +77,49 @@ trackingTool.trackUsage({
 })
 ```
 
-### Check if consent was already granted
+### Themes
 
-```js
-trackingTool.isConsentGranted()
-```
-
-### For the web version, there is the option to import the sap_horizon theme to be applied to the consent dialog
+For the web version, there is the option to import the sap_horizon theme to be applied to the consent dialog
 
 ```js
 import '@sap_oss/automated-usage-tracking-tool/theme/sap_horizon.css'
 ```
 
-### Aditional argument types are available for Typescript client applications
+### Types
+
+Types are available for Typescript client applications.
 
 ```js
 import { TrackerArguments, TrackUsageArguments, ConsentArguments } from '@sap_oss/automated-usage-tracking-tool'
 ```
 
-### Usage examples
+### Extra: Check If The Consent Was Already Granted
 
-On the /examples folder there are available example Javascript and Typescript Web and CLI client apps using the tool.
+**This method is not necessary for the implementation** (as this is performed behind the scenes), but it can be used to check if the consent was already granted if you want to use that information in your application.
+
+```js
+trackingTool.isConsentGranted()
+```
+
+## Usage Examples
+
+In the `/examples` folder there are available examples of Javascript and Typescript Web and CLI client apps using the tool.
+
+### JavaScript CLI Client
+
+This example demonstrates the integration with a JavaScript CLI client application. See [examples/javascript-cli-client/README.md](examples/javascript-cli-client/README.md) for more details.
+
+### JavaScript Web Client
+
+This example demonstrates the integration with a JavaScript web client application. See [examples/javascript-web-client/README.md](examples/javascript-web-client/README.md) for more details.
+
+### TypeScript CLI Client
+
+This example demonstrates the integration with a TypeScript CLI client application. See [examples/typescript-cli-client/README.md](examples/typescript-cli-client/README.md) for more details.
+
+### TypeScript Web Client (Angular)
+
+This example demonstrates the integration with a TypeScript web client application. See [examples/typescript-web-client/README.md](examples/typescript-web-client/README.md) for more details.
 
 ## Support, Feedback, Contributing
 
