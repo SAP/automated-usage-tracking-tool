@@ -1,8 +1,8 @@
-import { describe, test, beforeEach, expect, vi, Mock } from 'vitest'
-import Account from './account'
-import Gigya, { GigyaResponse } from './gigya'
-import { gigyaResponseMissingRequiredParameter, gigyaResponseOk, gigyaResponseTokenExpired } from './account.dataTest'
+import { beforeEach, describe, expect, Mock, test, vi } from 'vitest'
 import Usage from '../common/usage'
+import Account from './account'
+import { gigyaResponseMissingRequiredParameter, gigyaResponseOk, gigyaResponseTokenExpired } from './account.dataTest'
+import Gigya, { GigyaResponse } from './gigya'
 
 describe('Account', () => {
   const apiKey: string = 'apiKey'
@@ -67,7 +67,7 @@ describe('Account', () => {
       regToken: token,
       preferences: JSON.stringify({
         terms: {
-          usageAnalytics: {
+          anonymousUsageAnalytics: {
             isConsentGranted: true,
           },
         },

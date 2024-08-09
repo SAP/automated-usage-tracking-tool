@@ -1,27 +1,46 @@
-# TypescriptWebClient
+# TypeScript Web Client Example (Angular)
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.2.17.
+This project demonstrates the integration of the automated-usage-tracking-tool with an Angular web client application.
 
-## Development server
+## Project Structure
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+- `src/`
+  - `app/`: Contains the main application code.
+  - `lib/automatedUsageTrackingToolWrapper.js`: Wrapper for the automated usage tracking tool.
+- `dist/`: The build artifacts will be stored here after running the build command.
 
-## Code scaffolding
+## Installation
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+To install the project dependencies, run:
+
+```sh
+npm install
+```
+
+## Development Server
+
+To start the development server, run:
+
+```sh
+ng serve
+```
+
+Navigate to `http://localhost:4200/` in your web browser. The app will automatically reload if you change any of the source files.
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+To build the project, run:
 
-## Running unit tests
+```sh
+ng build
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+The build artifacts will be stored in the `dist/` directory.
 
-## Running end-to-end tests
+## Automated Usage Tracking Tool
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+The project integrates the automated-usage-tracking-tool to track user interactions. The integration is handled in the `src/lib/automatedUsageTrackingToolWrapper.ts` file.
 
-## Further help
+## License
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+This project is licensed under the ISC License. See the [LICENSE](../../LICENSE) file for details.
