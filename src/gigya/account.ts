@@ -56,7 +56,7 @@ export default class Account {
     body.profile = JSON.stringify({ email: email })
     body.preferences = JSON.stringify({
       terms: {
-        usageAnalytics: {
+        anonymousUsageAnalytics: {
           isConsentGranted: consent,
         },
       },
