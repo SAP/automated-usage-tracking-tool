@@ -8,6 +8,10 @@ The Automated Usage Tracking Tool is designed to help developers track user inte
 
 By integrating this tool, you can gather insights into how users interact with various features of your application, which can be invaluable for improving user experience and making data-driven decisions.
 
+<a href="docs/screenshots/screenshot-web-question-active.png"><img src="docs/screenshots/screenshot-web-question-active.png" alt="Web Question" style="height: 200px;"></a>
+<a href="docs/screenshots/screenshot-cli-question.png"><img src="docs/screenshots/screenshot-cli-question.png" alt="CLI Question" style="height: 200px;"></a>
+<a href="docs/screenshots/screenshot-cdc-list-accounts.png"><img src="docs/screenshots/screenshot-cdc-list-accounts.png" alt="CDC List Accounts" style="height: 200px;"></a>
+
 ### Key features
 
 - **Consent Management**: The tool provides built-in methods to request user consent for tracking, ensuring compliance with privacy regulations.
