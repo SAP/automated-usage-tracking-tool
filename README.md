@@ -18,7 +18,7 @@ By integrating this tool, you can gather insights into how users interact with v
 
 ## Requirements and Setup
 
-- **Node.js**: Ensure you are using Node.js version 18 or higher.
+- **Node.js**: Ensure you are using Node.js version 19 or higher.
 
 This tool is ready to use by JavaScript/Typescript client applications after importing and installing it from NPM.
 
