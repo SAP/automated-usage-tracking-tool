@@ -6,14 +6,16 @@ const trackingTool = new CliTracker({
 })
 
 export async function requestConsentConfirmation() {
+  // Request anonymous consent with a custom message
   return await trackingTool.requestConsentConfirmation({
-    message: 'This is a customized request consent confirmation message.', // generated email with customized message
+    message: 'This is a customized request consent confirmation message.',
   })
 }
 
 export async function requestConsentQuestion() {
+  // Request consent for a specific email
   return await trackingTool.requestConsentQuestion({
-    email: 'example@test.com', // specific email with default message
+    email: 'example@test.com',
   })
 }
 
