@@ -40,5 +40,11 @@
     "dotenv": "^16.4.5",
     "ts-node": "^10.9.2",
     "uuid": "^10.0.0"
-  }
+  },
+  "contributors": [
+    "Bruno Santos",
+    "Daniel Cabral",
+    "Luís Marques",
+    "Nelson Sousa"
+  ]
 }
