@@ -1,7 +1,7 @@
 import CliTracker, { ConsentArguments, TrackerArguments, TrackUsageArguments } from '@sap_oss/automated-usage-tracking-tool'
 import '@sap_oss/automated-usage-tracking-tool/theme/sap_horizon.css'
 
-const trackerArguments: TrackerArguments = { apiKey: '4_TCuGT23_GS-FxSIFf3YNdQ', dataCenter: 'eu1' }
+const trackerArguments: TrackerArguments = { apiKey: '4_3OulQC05sfcJ-D5mG6aMNg', dataCenter: 'eu1' }
 
 const consentArguments: ConsentArguments = {}
 
