@@ -17,13 +17,13 @@ class Cli {
     constructor(trackerArguments) {
         this.tracker = new cliTracker_1.default(trackerArguments);
     }
-    requestConsentQuestion(consentArguments) {
-        return __awaiter(this, void 0, void 0, function* () {
+    requestConsentQuestion() {
+        return __awaiter(this, arguments, void 0, function* (consentArguments = {}) {
             return yield this.tracker.requestConsentQuestion(consentArguments);
         });
     }
-    requestConsentConfirmation(consentArguments) {
-        return __awaiter(this, void 0, void 0, function* () {
+    requestConsentConfirmation() {
+        return __awaiter(this, arguments, void 0, function* (consentArguments = {}) {
             return yield this.tracker.requestConsentConfirmation(consentArguments);
         });
     }

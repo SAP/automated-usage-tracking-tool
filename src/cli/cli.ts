@@ -8,11 +8,11 @@ export default class Cli {
     this.tracker = new CliTracker(trackerArguments)
   }
 
-  async requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean> {
+  async requestConsentQuestion(consentArguments: ConsentArguments = {}): Promise<boolean> {
     return await this.tracker.requestConsentQuestion(consentArguments)
   }
 
-  async requestConsentConfirmation(consentArguments: ConsentArguments): Promise<boolean> {
+  async requestConsentConfirmation(consentArguments: ConsentArguments = {}): Promise<boolean> {
     return await this.tracker.requestConsentConfirmation(consentArguments)
   }
 
