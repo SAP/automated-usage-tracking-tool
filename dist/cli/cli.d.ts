@@ -2,8 +2,8 @@ import { ConsentArguments, TrackUsageArguments, TrackerArguments } from '../comm
 export default class Cli {
     private tracker;
     constructor(trackerArguments: TrackerArguments);
-    requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean>;
-    requestConsentConfirmation(consentArguments: ConsentArguments): Promise<boolean>;
+    requestConsentQuestion(consentArguments?: ConsentArguments): Promise<boolean>;
+    requestConsentConfirmation(consentArguments?: ConsentArguments): Promise<boolean>;
     trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void>;
     isConsentGranted(): boolean;
 }
