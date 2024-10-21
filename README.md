@@ -127,6 +127,20 @@ This example demonstrates the integration with a TypeScript CLI client applicati
 
 This example demonstrates the integration with a TypeScript web client application. See [examples/typescript-web-client/README.md](examples/typescript-web-client/README.md) for more details.
 
+## Architecture
+
+### Block Diagram
+
+<a href="docs/architecture/general_block_diagram.png"><img src="docs/architecture/general_block_diagram.png" alt="Block Diagram" ></a>
+
+### Sequence Diagram - Consent Request
+
+<a href="docs/architecture/get_and_save_user_consent.png"><img src="docs/architecture/get_and_save_user_consent.png" alt="Sequence Diagram - Consent Request" ></a>
+
+### Sequence Diagram - Track Usage
+
+<a href="docs/architecture/save_new_usage.png"><img src="docs/architecture/save_new_usage.png" alt="Sequence Diagram - Track Usage" ></a>
+
 ## Support, Feedback, Contributing
 
 This project is open to feature requests/suggestions, bug reports etc. via [GitHub issues](https://github.com/SAP/automated-usage-tracking-tool/issues). Contribution and feedback are encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our [Contribution Guidelines](CONTRIBUTING.md).

@@ -1,0 +1,62 @@
+{
+  "apiKey": "4_3OulQC05sfcJ-D5mG6aMNg",
+  "siteId": 251588122855,
+  "id": "f0a7b01eda6641e9b036b831e2ea6e8a",
+  "name": "Move new usages from \"latestUsages\" to \"usages\"",
+  "status": "published",
+  "description": "",
+  "lastRuntime": "2024-10-21T12:57:32.942Z",
+  "steps": [
+    {
+      "id": "1. Read emailAccounts",
+      "type": "datasource.read.gigya.account",
+      "params": {
+        "select": "UID,profile,data",
+        "from": "emailAccounts",
+        "deltaField": "lastUpdatedTimestamp",
+        "batchSize": 300,
+        "maxConcurrency": 1,
+        "keepFieldNamesWithDotAsIs": false
+      },
+      "next": ["2. Process \"latestUsages\" to \"usages\""]
+    },
+    {
+      "id": "2. Process \"latestUsages\" to \"usages\"",
+      "type": "record.evaluate",
+      "params": {
+        "script": "ZnVuY3Rpb24gcHJvY2VzcyhyZWNvcmQsIGN0eCwgbG9nZ2VyLCBuZXh0KSB7DQogICAgLy8gQmFzZSBWYWxpZGF0aW9uDQogICAgaWYoIXJlY29yZCB8fCAhcmVjb3JkLnByb2ZpbGUgfHwgIXJlY29yZC5kYXRhKSByZXR1cm47DQogICAgDQogICAgLy8gU2V0dXANCiAgICBsZXQgeyBVSUQgfSA9IHJlY29yZDsNCiAgICBsZXQgcmVjID0geyBVSUQsIHByb2ZpbGU6IHt9LCBkYXRhOiB7fX07DQogICAgaWYocmVjb3JkLnByb2ZpbGUuZW1haWwpIHJlYy5wcm9maWxlLmVtYWlsID0gcmVjb3JkLnByb2ZpbGUuZW1haWw7DQoNCiAgICAvLyAjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjDQogICAgLy8gTW92ZSBuZXcgdXNhZ2VzIGZyb20gImxhdGVzdFVzYWdlcyIgdG8gInVzYWdlcyINCiAgICAvLyAjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjDQogICAgDQogICAgLy8gVmFsaWRhdGlvbg0KICAgIGlmKCFyZWNvcmQuZGF0YS5sYXRlc3RVc2FnZXM/Lmxlbmd0aCkgcmV0dXJuOw0KICAgIA0KICAgIC8vIEluaXQgdXNhZ2VzIGlmIG5lY2Vzc2FyeQ0KICAgIGlmKCFyZWNvcmQuZGF0YS51c2FnZXMpIHsNCiAgICAgICAgcmVjb3JkLmRhdGEudXNhZ2VzID0gW107DQogICAgfQ0KICAgIA0KICAgIC8vIEdldCBvbmx5IG5ldyB1c2FnZXMNCiAgICB2YXIgbmV3VXNhZ2VzID0gcmVjb3JkLmRhdGEubGF0ZXN0VXNhZ2VzLmZpbHRlcigobmV3VXNhZ2UpID0+IHsNCiAgICAgICAgdmFyIGlzVXNhZ2VTdG9yZWQgPSByZWNvcmQuZGF0YS51c2FnZXMuZmluZCgoc3RvcmVkVXNhZ2UpID0+IHN0b3JlZFVzYWdlLmlkID09PSBuZXdVc2FnZS5pZCk7DQogICAgICAgIGlmKGlzVXNhZ2VTdG9yZWQpIHsNCiAgICAgICAgICAgIHJldHVybiBmYWxzZTsNCiAgICAgICAgfQ0KICAgICAgICByZXR1cm4gdHJ1ZTsNCiAgICB9KTsNCiAgICANCiAgICAvLyBBZGQgbmV3IHVzYWdlcyBmcm9tICJkYXRhLmxhdGVzdFVzYWdlcyIgdG8gImRhdGEudXNhZ2VzIg0KICAgIHJlYy5kYXRhLnVzYWdlcyA9IFsuLi5yZWNvcmQuZGF0YS51c2FnZXMsIC4uLm5ld1VzYWdlc107DQogICAgDQogICAgLy8gQ2xlYXIgbGF0ZXN0VXNhZ2VzDQogICAgcmVjLmRhdGEubGF0ZXN0VXNhZ2VzID0gW107DQoNCiAgICAvL2xvZ2dlci5pbmZvKCJCZWZvcmU6ICIsIHJlY29yZCk7DQogICAgLy9sb2dnZXIuaW5mbygiQWZ0ZXI6ICIsIHJlYyk7DQogICAgcmV0dXJuIHJlYzsNCn0=",
+        "ECMAScriptVersion": "12",
+        "notifyLastRecord": false
+      },
+      "next": ["3. Update Lite"]
+    },
+    {
+      "id": "3. Update Lite",
+      "type": "datasource.write.gigya.generic",
+      "params": {
+        "apiMethod": "accounts.setAccountInfo",
+        "maxConnections": 10,
+        "apiParams": [
+          {
+            "sourceField": "data",
+            "paramName": "data",
+            "value": ""
+          },
+          {
+            "sourceField": "profile",
+            "paramName": "profile",
+            "value": ""
+          },
+          {
+            "sourceField": "",
+            "paramName": "isLite",
+            "value": "true"
+          }
+        ],
+        "addResponse": false
+      }
+    }
+  ],
+  "version": 1,
+  "updatedByEmail": "l.marques@sap.com"
+}
