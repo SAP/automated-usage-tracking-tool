@@ -141,6 +141,10 @@ This example demonstrates the integration with a TypeScript web client applicati
 
 <a href="docs/architecture/save_new_usage.png"><img src="docs/architecture/save_new_usage.png" alt="Sequence Diagram - Track Usage" ></a>
 
+## Dataflow - Store Latest Usages
+
+The [Store Latest Usages Dataflow](dataflows/store_latest_usages.json) runs every 10 minutes, copying the data from the user's `data.latestUsages` (ClientModify) to `data.usages` (ServerOnly). This process ensures long-term storage of usage data and prevents loss of old usages when adding new ones or in case of user data deletion.
+
 ## Support, Feedback, Contributing
 
 This project is open to feature requests/suggestions, bug reports etc. via [GitHub issues](https://github.com/SAP/automated-usage-tracking-tool/issues). Contribution and feedback are encouraged and always welcome. For more information about how to contribute, the project structure, as well as additional contribution information, see our [Contribution Guidelines](CONTRIBUTING.md).
