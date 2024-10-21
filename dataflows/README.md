@@ -2,7 +2,7 @@
 
 ## Dataflow - Store Latest Usages
 
-The [Store Latest Usages Dataflow](dataflows/store_latest_usages.json) runs every 10 minutes, copying the data from the user's `data.latestUsages` (ClientModify) to `data.usages` (ServerOnly). This process ensures long-term storage of usage data and prevents loss of old usages when adding new ones or in case of user data deletion.
+The [Store Latest Usages Dataflow](store_latest_usages.json) runs every 10 minutes, copying the data from the user's `data.latestUsages` (ClientModify) to `data.usages` (ServerOnly). This process ensures long-term storage of usage data and prevents loss of old usages when adding new ones or in case of user data deletion.
 
 ### Steps
 
