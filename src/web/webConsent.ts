@@ -1,6 +1,6 @@
 import Consent from '../common/consent'
 
-export default class WebConsent implements Consent {
+export default class WebConsent extends Consent {
   #dialogId = 'automated-usage-tracking-tool-dialog'
   #dialogContentId = `${this.#dialogId}-content`
   #dialogFooterId = `${this.#dialogId}-footer`

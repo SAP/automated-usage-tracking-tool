@@ -6,4 +6,16 @@ export default abstract class Consent {
 
   abstract askConsentConfirm(): Promise<boolean>
   abstract askConsentQuestion(): Promise<boolean>
+
+  provideConsentConfirmAnswer(consent: string = Consent.message): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      consent?.toUpperCase() === 'Y' || consent?.toUpperCase() === 'YES' ? resolve(true) : reject(false)
+    })
+  }
+
+  provideConsentQuestionAnswer(consent: string = Consent.message): Promise<boolean> {
+    return new Promise<boolean>((resolve, reject) => {
+      resolve(consent?.toUpperCase() === 'Y' || consent?.toUpperCase() === 'YES' ? true : false)
+    })
+  }
 }

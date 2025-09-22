@@ -113,3 +113,4 @@ typings/
 
 # development time ignore rules
 usageTracking
+dist/

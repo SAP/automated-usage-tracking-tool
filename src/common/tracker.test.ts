@@ -1,9 +1,11 @@
 import { describe, test, expect, vi, beforeEach } from 'vitest'
 import CliTracker from '../cli/cliTracker'
+import WebTracker from '../web/webTracker'
 import Tracker from '../common/tracker'
 
 vi.mock('./storage')
 vi.mock('../cli/fileStorage')
+vi.mock('../web/webStorage')
 vi.mock('../gigya/account')
 
 beforeEach(() => {
@@ -13,18 +15,19 @@ beforeEach(() => {
 describe('Tracker', () => {
   const apiKey: string = 'apiKey'
   const dataCenter: string = 'eu1'
-  const tracker: Tracker = new CliTracker({ apiKey, dataCenter })
+  const cliTracker: Tracker = new CliTracker({ apiKey, dataCenter })
+  const webTracker: Tracker = new WebTracker({ apiKey, dataCenter })
   const email: string = 'email@domain.com'
   const toolName: string = 'tool name'
 
-  test('consent is already granted', () => {
+  test.each([cliTracker, webTracker])('consent is already granted', (tracker) => {
     vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(true)
     const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
     tracker.requestConsentConfirmation({})
     expect(spySetConsentGranted).not.toHaveBeenCalled()
   })
 
-  test('consent confirm is not granted', () => {
+  test.each([cliTracker, webTracker])('consent confirm is not granted', (tracker) => {
     vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
     const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
     vi.spyOn(tracker.consent, 'askConsentConfirm').mockReturnValue(Promise.reject(false))
@@ -32,7 +35,7 @@ describe('Tracker', () => {
     expect(spySetConsentGranted).not.toHaveBeenCalled()
   })
 
-  test('consent confirm is granted', async () => {
+  test.each([cliTracker, webTracker])('consent confirm is granted', async (tracker) => {
     const consentResponse: boolean = true
     vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
     const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
@@ -43,7 +46,7 @@ describe('Tracker', () => {
     expect(spyAccount).toHaveBeenCalledWith(consentResponse, email)
   })
 
-  test('consent question is not granted', () => {
+  test.each([cliTracker, webTracker])('consent question is not granted', (tracker) => {
     vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
     const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
     vi.spyOn(tracker.consent, 'askConsentQuestion').mockReturnValue(Promise.resolve(false))
@@ -51,7 +54,7 @@ describe('Tracker', () => {
     expect(spySetConsentGranted).not.toHaveBeenCalled()
   })
 
-  test('consent question is granted', async () => {
+  test.each([cliTracker, webTracker])('consent question is granted', async (tracker) => {
     const consentResponse: boolean = true
     vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
     const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
@@ -62,14 +65,14 @@ describe('Tracker', () => {
     expect(spyAccount).toHaveBeenCalledWith(consentResponse, expect.stringContaining('@automated-usage-tracking-tool.sap'))
   })
 
-  test('track usage without consent', () => {
+  test.each([cliTracker, webTracker])('track usage without consent', (tracker) => {
     vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
     const spySetLatestUsage = vi.spyOn(tracker.storage, 'setLatestUsage')
     tracker.trackUsage({ toolName })
     expect(spySetLatestUsage).not.toHaveBeenCalled()
   })
 
-  test('track usage with consent', async () => {
+  test.each([cliTracker, webTracker])('track usage with consent', async (tracker) => {
     const featureName: string = 'feature name'
     vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(true)
     const spySetLatestUsage = vi.spyOn(tracker.storage, 'setLatestUsage')
@@ -77,5 +80,45 @@ describe('Tracker', () => {
     await tracker.trackUsage({ toolName, featureName })
     expect(spySetLatestUsage).toHaveBeenCalledWith(toolName, featureName)
     expect(spyAccount).toHaveBeenCalled()
+  })
+
+  test.each([cliTracker, webTracker])('track usage with provided consent question answer true', async (tracker) => {
+    const featureName: string = 'feature name'
+    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
+    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
+    const spyAccount = vi.spyOn(tracker.account, 'setConsent')
+    await expect(tracker.provideConsentQuestionAnswer({ email, message: 'yes' })).resolves.toBeTruthy()
+    expect(spySetConsentGranted).toHaveBeenCalledWith(true, email)
+    expect(spyAccount).toHaveBeenCalled()
+  })
+
+  test.each([cliTracker, webTracker])('track usage with provided consent question answer false', async (tracker) => {
+    const featureName: string = 'feature name'
+    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
+    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
+    const spyAccount = vi.spyOn(tracker.account, 'setConsent')
+    await expect(tracker.provideConsentQuestionAnswer({ email, message: 'no' })).resolves.toBeFalsy()
+    expect(spySetConsentGranted).not.toHaveBeenCalled()
+    expect(spyAccount).not.toHaveBeenCalled()
+  })
+
+  test.each([cliTracker, webTracker])('track usage with provided consent confirm answer true', async (tracker) => {
+    const featureName: string = 'feature name'
+    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
+    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
+    const spyAccount = vi.spyOn(tracker.account, 'setConsent')
+    await expect(tracker.provideConsentConfirmAnswer({ email, message: 'yes' })).resolves.toBeTruthy()
+    expect(spySetConsentGranted).toHaveBeenCalledWith(true, email)
+    expect(spyAccount).toHaveBeenCalled()
+  })
+
+  test.each([cliTracker, webTracker])('track usage with provided consent confirm answer false', async (tracker) => {
+    const featureName: string = 'feature name'
+    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
+    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
+    const spyAccount = vi.spyOn(tracker.account, 'setConsent')
+    await expect(tracker.provideConsentConfirmAnswer({ email, message: 'no' })).rejects.toBeFalsy()
+    expect(spySetConsentGranted).not.toHaveBeenCalled()
+    expect(spyAccount).not.toHaveBeenCalled()
   })
 })
