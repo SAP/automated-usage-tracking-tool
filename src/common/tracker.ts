@@ -25,6 +25,14 @@ export default abstract class Tracker {
     return await this.requestConsent(this.consent.askConsentConfirm.bind(this.consent), consentArguments)
   }
 
+  public async provideConsentQuestionAnswer(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.requestConsent(this.consent.provideConsentQuestionAnswer.bind(this.consent), consentArguments)
+  }
+
+  public async provideConsentConfirmAnswer(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.requestConsent(this.consent.provideConsentConfirmAnswer.bind(this.consent), consentArguments)
+  }
+
   async trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void> {
     if (this.storage.isConsentGranted()) {
       this.storage.setLatestUsage(trackUsageArguments.toolName, trackUsageArguments.featureName)
