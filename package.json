@@ -1,6 +1,6 @@
 {
   "name": "@sap_oss/automated-usage-tracking-tool",
-  "version": "1.1.0",
+  "version": "1.1.0-20250925092432+1f207f9af9f2c15ef3acfef44b6de42395c34a4f",
   "description": "Automated usage tracking tool is a user-centric data collection tool, using a Customer Data Cloud tenant, that tracks the usage of CX IAS's automation tools, generates comprehensive reports for evaluating tool effectiveness and improvements.",
   "main": "dist/cli/index.js",
   "browser": "dist/web/index.js",
