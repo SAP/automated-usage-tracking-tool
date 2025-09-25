@@ -16,6 +16,14 @@ export default class Cli {
     return await this.tracker.requestConsentConfirmation(consentArguments)
   }
 
+  async provideConsentQuestionAnswer(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.tracker.provideConsentQuestionAnswer(consentArguments)
+  }
+
+  async provideConsentConfirmAnswer(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.tracker.provideConsentConfirmAnswer(consentArguments)
+  }
+
   async trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void> {
     return await this.tracker.trackUsage(trackUsageArguments)
   }
