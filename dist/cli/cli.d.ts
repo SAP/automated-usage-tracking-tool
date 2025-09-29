@@ -4,6 +4,8 @@ export default class Cli {
     constructor(trackerArguments: TrackerArguments);
     requestConsentQuestion(consentArguments?: ConsentArguments): Promise<boolean>;
     requestConsentConfirmation(consentArguments?: ConsentArguments): Promise<boolean>;
+    provideConsentQuestionAnswer(consentArguments: ConsentArguments): Promise<boolean>;
+    provideConsentConfirmAnswer(consentArguments: ConsentArguments): Promise<boolean>;
     trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void>;
     isConsentGranted(): boolean;
 }

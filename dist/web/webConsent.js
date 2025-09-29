@@ -10,8 +10,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _WebConsent_instances, _WebConsent_dialogId, _WebConsent_dialogContentId, _WebConsent_dialogFooterId, _WebConsent_dialogConfirmButtonId, _WebConsent_dialogDeclineButtonId, _WebConsent_setDialog, _WebConsent_getConfirmDialogHTML, _WebConsent_getConfirmDialog, _WebConsent_getDialogButton, _WebConsent_setEventHandler, _WebConsent_confirmDialogExists, _WebConsent_insertConfirmDialog, _WebConsent_commonButtonHandler, _WebConsent_confirmButtonHandler, _WebConsent_declineButtonHandler, _WebConsent_preventEscape;
 Object.defineProperty(exports, "__esModule", { value: true });
 const consent_1 = __importDefault(require("../common/consent"));
-class WebConsent {
+class WebConsent extends consent_1.default {
     constructor() {
+        super(...arguments);
         _WebConsent_instances.add(this);
         _WebConsent_dialogId.set(this, 'automated-usage-tracking-tool-dialog');
         _WebConsent_dialogContentId.set(this, `${__classPrivateFieldGet(this, _WebConsent_dialogId, "f")}-content`);

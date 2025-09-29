@@ -31,6 +31,16 @@ class Tracker {
             return yield this.requestConsent(this.consent.askConsentConfirm.bind(this.consent), consentArguments);
         });
     }
+    provideConsentQuestionAnswer(consentArguments) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.requestConsent(this.consent.provideConsentQuestionAnswer.bind(this.consent), consentArguments);
+        });
+    }
+    provideConsentConfirmAnswer(consentArguments) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.requestConsent(this.consent.provideConsentConfirmAnswer.bind(this.consent), consentArguments);
+        });
+    }
     trackUsage(trackUsageArguments) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.storage.isConsentGranted()) {
