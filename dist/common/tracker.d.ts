@@ -10,6 +10,8 @@ export default abstract class Tracker {
     constructor(trackerArguments: TrackerArguments, storage: Storage, consent: Consent);
     requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean>;
     requestConsentConfirmation(consentArguments: ConsentArguments): Promise<boolean>;
+    provideConsentQuestionAnswer(consentArguments: ConsentArguments): Promise<boolean>;
+    provideConsentConfirmAnswer(consentArguments: ConsentArguments): Promise<boolean>;
     trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void>;
     private requestConsent;
 }

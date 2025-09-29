@@ -27,6 +27,16 @@ class Web {
             return yield this.tracker.requestConsentConfirmation(consentArguments);
         });
     }
+    provideConsentQuestionAnswer(consentArguments) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.tracker.provideConsentQuestionAnswer(consentArguments);
+        });
+    }
+    provideConsentConfirmAnswer(consentArguments) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.tracker.provideConsentConfirmAnswer(consentArguments);
+        });
+    }
     trackUsage(trackUsageArguments) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.tracker.trackUsage(trackUsageArguments);
