@@ -3,11 +3,11 @@ general:
   productiveBranch: 'main'
   pipelineOptimization: false
   gitHttpsCredentialsId: 'hyperspace-github-tools-sap-i545698'
-  vaultAppRoleTokenCredentialsId: 'vault-approle-role-id-3103-36039'
-  vaultAppRoleSecretTokenCredentialsId: 'vault-approle-secret-id-accessor-3103-36039'
+  vaultAppRoleTokenCredentialsId: 'vault-approle-role-id-3103-49509'
+  vaultAppRoleSecretTokenCredentialsId: 'vault-approle-secret-id-accessor-3103-49509'
   vaultPath: 'piper/PIPELINE-GROUP-3103'
   vaultBasePath: 'piper/PIPELINE-GROUP-3103'
-  vaultPipelineName: 'PIPELINE-36039'
+  vaultPipelineName: 'PIPELINE-49509'
   vaultServerUrl: 'https://vault.tools.sap'
   vaultNamespace: 'ies/hyperspace/pipelines'
   nativeBuild: true
@@ -21,28 +21,26 @@ stages:
     karmaExecuteTests: false
 steps:
   artifactPrepareVersion:
-    gitHttpsCredentialVaultSecretName: 'GROUP-SECRETS/sap-customer-data-cloud-accelerator-github'
+    gitHttpsCredentialVaultSecretName: 'GROUP-SECRETS/github-cdc-github'
   executeBuild:
     buildType: stage
   sapCallStagingService:
     url: 'https://staging.repositories.cloud.sap/stage/api'
     profile: 'group-3103-default'
   whitesourceExecuteScan:
-    whitesourceProductName: 'SHC - sap-automation-tool-usage-tracker'
-    whitesourceProductToken: '7e3f2d441e7745de9745cd151884d35724853f9363dd4d42b5b0f30b3558941e'
+    whitesourceProductName: 'SHC - automated-usage-tracking-tool'
+    whitesourceProductToken: '2d1699b5322c4e3092648eea9552f59507f6ef5be6c64ca3a7611fb5d41e0503'
   sonarExecuteScan:
     serverUrl: 'https://sonar.tools.sap'
-    sonarTokenCredentialsId: 'hyperspace-sonar-i545698'
-    sonarVaultSecretName: 'PIPELINE-36039/sonar'
+    sonarVaultSecretName: 'GROUP-SECRETS/sonar-sonar-cdc-sonar-token'
     waitForQualityGate: true
-    projectKey: automated-usage-tracking-tool
-  checkmarxExecuteScan:
+  checkmarxOneExecuteScan:
     projectName: 'automated-usage-tracking-tool'
-    teamName: '/CxServer/SP/SAP/PI/SMEDevelopmentSupport/SMECoreB1Program'
-    preset: 'SAP_Corp_JavaScript_Client' # https://github.wdf.sap.corp/pages/Security-Testing/doc/checkmarx/Presets/
+    applicationName: 'OS_CX_AUTOMATION'
+    preset: 'SAP_Corp_JavaScript_Server' # you can find the preset per language here - https://github.wdf.sap.corp/pages/Security-Testing/doc/cxone/Presets/
     filterPattern: '!**/node_modules/**, !**/.xmake/**, !**/coverage/**, !**/dist/**, !**/__tests__/**, !bom-npm.xml, !**/tsconfig.json, !**/*.test.ts, !**/examples/**, **/src/**, **/*.html, **/*.xml, **/*.js, **/*.ts'
   sapCumulusUpload:
-    pipelineId: '917501e3-d9c2-4ba9-be50-c8baf4ff0266'
+    pipelineId: 'b7706570-4347-49ad-9538-511b61fa0410'
   handlePipelineStepErrors:
     failOnError: false
   npmExecuteScripts:
