@@ -1,12 +1,26 @@
+vi.mock('../cli/fileStorage')
+vi.mock('../web/webStorage')
+vi.mock('./storage', () => ({
+  default: vi.fn().mockImplementation(() => ({
+    initStorage: vi.fn(),
+    isConsentGranted: vi.fn(),
+    setConsentGranted: vi.fn(),
+    setLatestUsage: vi.fn(),
+    getEmail: vi.fn(),
+    getLatestUsages: vi.fn(),
+  })),
+}))
+vi.mock('../gigya/account', () => ({
+  default: vi.fn().mockImplementation(() => ({
+    setConsent: vi.fn(),
+    setLatestUsages: vi.fn(),
+  })),
+}))
+
 import { describe, test, expect, vi, beforeEach } from 'vitest'
 import CliTracker from '../cli/cliTracker'
 import WebTracker from '../web/webTracker'
 import Tracker from '../common/tracker'
-
-vi.mock('./storage')
-vi.mock('../cli/fileStorage')
-vi.mock('../web/webStorage')
-vi.mock('../gigya/account')
 
 beforeEach(() => {
   vi.restoreAllMocks()
@@ -83,7 +97,6 @@ describe('Tracker', () => {
   })
 
   test.each([cliTracker, webTracker])('track usage with provided consent question answer true', async (tracker) => {
-    const featureName: string = 'feature name'
     vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
     const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
     const spyAccount = vi.spyOn(tracker.account, 'setConsent')
@@ -93,7 +106,6 @@ describe('Tracker', () => {
   })
 
   test.each([cliTracker, webTracker])('track usage with provided consent question answer false', async (tracker) => {
-    const featureName: string = 'feature name'
     vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
     const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
     const spyAccount = vi.spyOn(tracker.account, 'setConsent')
@@ -103,7 +115,6 @@ describe('Tracker', () => {
   })
 
   test.each([cliTracker, webTracker])('track usage with provided consent confirm answer true', async (tracker) => {
-    const featureName: string = 'feature name'
     vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
     const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
     const spyAccount = vi.spyOn(tracker.account, 'setConsent')
@@ -113,7 +124,6 @@ describe('Tracker', () => {
   })
 
   test.each([cliTracker, webTracker])('track usage with provided consent confirm answer false', async (tracker) => {
-    const featureName: string = 'feature name'
     vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
     const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
     const spyAccount = vi.spyOn(tracker.account, 'setConsent')
