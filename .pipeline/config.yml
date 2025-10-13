@@ -39,6 +39,7 @@ steps:
     applicationName: 'OS_CX_AUTOMATION'
     preset: 'SAP_Corp_JavaScript_Server' # you can find the preset per language here - https://github.wdf.sap.corp/pages/Security-Testing/doc/cxone/Presets/
     filterPattern: '!**/node_modules/**, !**/.xmake/**, !**/coverage/**, !**/dist/**, !**/__tests__/**, !bom-npm.xml, !**/tsconfig.json, !**/*.test.ts, !**/examples/**, **/src/**, **/*.html, **/*.xml, **/*.js, **/*.ts'
+    branch: 'main'
   sapCumulusUpload:
     pipelineId: 'b7706570-4347-49ad-9538-511b61fa0410'
   handlePipelineStepErrors:
