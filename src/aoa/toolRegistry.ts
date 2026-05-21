@@ -5,14 +5,14 @@ export interface ToolDefinition {
 }
 
 const TOOL_REGISTRY: ToolDefinition[] = [
-  { toolId: '501', toolName: 'UMAT - Upgrade & Migration Assessment Automation for SAP Commerce (Legacy)', actualEffortReduction: 15 },
+
   { toolId: '502', toolName: 'Commerce Upgrade Assistant', actualEffortReduction: 10 },
   { toolId: '503', toolName: 'Quality Toolbox', actualEffortReduction: 20 },
   { toolId: '505', toolName: 'Commerce Initializr', actualEffortReduction: 11 },
-  { toolId: '507', toolName: 'Cloud Readiness Check', actualEffortReduction: 7 },
+  { toolId: '507', toolName: 'CRC-Container', actualEffortReduction: 7 },
   { toolId: '510', toolName: 'Commerce Migration Toolkit', actualEffortReduction: 15 },
   { toolId: '509', toolName: 'Platform Upgrade Assessment', actualEffortReduction: 7 },
-  { toolId: '509', toolName: 'Platform Upgrade Assessment (Legacy)', actualEffortReduction: 5 },
+
   { toolId: '510', toolName: 'SAP Commerce Migration Utilities', actualEffortReduction: 2 },
   { toolId: '511', toolName: 'Hawkeye Agent', actualEffortReduction: 5 },
   { toolId: '515', toolName: 'CRM Move', actualEffortReduction: 5 },
@@ -33,7 +33,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   { toolId: '524', toolName: 'SAP Commerce DB Sync', actualEffortReduction: 20 },
   { toolId: '543', toolName: 'Self-Service Portal', actualEffortReduction: 125 },
   { toolId: '528', toolName: 'SAP Sales Cloud V2 Configuration Accelerator', actualEffortReduction: 17 },
-  { toolId: '528', toolName: 'SAP Service Cloud V2 Configuration Accelerator', actualEffortReduction: 17 },
+  { toolId: '529', toolName: 'SAP Service Cloud V2 Configuration Accelerator', actualEffortReduction: 17 },
   { toolId: '530', toolName: 'SAP C4C V1 Configuration Accelerator', actualEffortReduction: 22 },
   { toolId: '531', toolName: 'SAP Service Cloud V2 Layout Extension', actualEffortReduction: 22 },
   { toolId: '533', toolName: 'CX Translations', actualEffortReduction: 15 },
@@ -65,10 +65,6 @@ const TOOL_REGISTRY: ToolDefinition[] = [
 
 export function getToolByName(toolName: string): ToolDefinition | undefined {
   return TOOL_REGISTRY.find((t) => t.toolName === toolName)
-}
-
-export function getToolById(toolId: string): ToolDefinition | undefined {
-  return TOOL_REGISTRY.find((t) => t.toolId === toolId)
 }
 
 export default TOOL_REGISTRY
