@@ -1,0 +1,22 @@
+{
+  "manifest_version": 3,
+  "name": "Tracking Tool Chrome Extension Example",
+  "version": "1.0.0",
+  "description": "Example Chrome Extension using automated-usage-tracking-tool with service worker proxy",
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://*.authentication.eu10.hana.ondemand.com/*",
+    "https://asc-auto-ops-tracking-api-test.cfapps.eu10-004.hana.ondemand.com/*",
+    "https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://your-target-site.com/*"],
+      "run_at": "document_end",
+      "js": ["content-script.js"]
+    }
+  ]
+}

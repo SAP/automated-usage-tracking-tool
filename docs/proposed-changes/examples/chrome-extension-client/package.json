@@ -1,0 +1,17 @@
+{
+  "name": "chrome-extension-client-example",
+  "version": "1.0.0",
+  "description": "Example Chrome Extension (MV3) using automated-usage-tracking-tool with service worker proxy",
+  "private": true,
+  "scripts": {
+    "build": "webpack --config webpack.config.js"
+  },
+  "dependencies": {
+    "@sap_oss/automated-usage-tracking-tool": "latest"
+  },
+  "devDependencies": {
+    "dotenv-webpack": "^8.0.0",
+    "webpack": "^5.90.0",
+    "webpack-cli": "^5.1.0"
+  }
+}
