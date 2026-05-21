@@ -1,19 +1,6 @@
-vi.mock('../cli/fileStorage')
-vi.mock('../web/webStorage')
-vi.mock('./storage', () => ({
+vi.mock('../aoa/aoaClient', () => ({
   default: vi.fn().mockImplementation(() => ({
-    initStorage: vi.fn(),
-    isConsentGranted: vi.fn(),
-    setConsentGranted: vi.fn(),
-    setLatestUsage: vi.fn(),
-    getEmail: vi.fn(),
-    getLatestUsages: vi.fn(),
-  })),
-}))
-vi.mock('../gigya/account', () => ({
-  default: vi.fn().mockImplementation(() => ({
-    setConsent: vi.fn(),
-    setLatestUsages: vi.fn(),
+    sendTrackingReport: vi.fn().mockResolvedValue(undefined),
   })),
 }))
 
@@ -23,112 +10,179 @@ import WebTracker from '../web/webTracker'
 import Tracker from '../common/tracker'
 
 beforeEach(() => {
-  vi.restoreAllMocks()
+  vi.clearAllMocks()
 })
 
 describe('Tracker', () => {
-  const apiKey: string = 'apiKey'
-  const dataCenter: string = 'eu1'
-  const cliTracker: Tracker = new CliTracker({ apiKey, dataCenter })
-  const webTracker: Tracker = new WebTracker({ apiKey, dataCenter })
-  const email: string = 'email@domain.com'
-  const toolName: string = 'tool name'
+  const trackerArgs = {
+    clientId: 'test-client-id',
+    clientSecret: 'test-client-secret',
+    tokenUrl: 'https://auth.example.com/oauth/token',
+    apiUrl: 'https://api.example.com',
+  }
 
-  test.each([cliTracker, webTracker])('consent is already granted', (tracker) => {
-    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(true)
-    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
-    tracker.requestConsentConfirmation({})
-    expect(spySetConsentGranted).not.toHaveBeenCalled()
+  test('consent methods always return true (deprecated)', async () => {
+    const cliTracker: Tracker = new CliTracker(trackerArgs)
+    const webTracker: Tracker = new WebTracker(trackerArgs)
+    for (const tracker of [cliTracker, webTracker]) {
+      await expect(tracker.requestConsentConfirmation()).resolves.toBe(true)
+      await expect(tracker.requestConsentQuestion()).resolves.toBe(true)
+      await expect(tracker.provideConsentQuestionAnswer()).resolves.toBe(true)
+      await expect(tracker.provideConsentConfirmAnswer()).resolves.toBe(true)
+    }
   })
 
-  test.each([cliTracker, webTracker])('consent confirm is not granted', (tracker) => {
-    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
-    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
-    vi.spyOn(tracker.consent, 'askConsentConfirm').mockReturnValue(Promise.reject(false))
-    expect(tracker.requestConsentConfirmation({})).rejects.toBeFalsy()
-    expect(spySetConsentGranted).not.toHaveBeenCalled()
+  test('isConsentGranted always returns true (deprecated)', () => {
+    const cliTracker: Tracker = new CliTracker(trackerArgs)
+    const webTracker: Tracker = new WebTracker(trackerArgs)
+    expect(cliTracker.isConsentGranted()).toBe(true)
+    expect(webTracker.isConsentGranted()).toBe(true)
   })
 
-  test.each([cliTracker, webTracker])('consent confirm is granted', async (tracker) => {
-    const consentResponse: boolean = true
-    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
-    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
-    const spyAccount = vi.spyOn(tracker.account, 'setConsent')
-    vi.spyOn(tracker.consent, 'askConsentConfirm').mockReturnValue(Promise.resolve(consentResponse))
-    await expect(tracker.requestConsentConfirmation({ email })).resolves.toBeTruthy()
-    expect(spySetConsentGranted).toHaveBeenCalledWith(consentResponse, email)
-    expect(spyAccount).toHaveBeenCalledWith(consentResponse, email)
+  test('trackUsage sends report to AOA by toolName', async () => {
+    const tracker = new CliTracker(trackerArgs)
+    await tracker.trackUsage({ toolName: 'Commerce Migration Toolkit' })
+    const today = new Date().toISOString().split('T')[0]
+    expect(tracker.aoaClient).not.toBeNull()
+    const spy = vi.spyOn(tracker.aoaClient!, 'sendTrackingReport')
+    await tracker.trackUsage({ toolName: 'Commerce Migration Toolkit' })
+    expect(spy).toHaveBeenCalledWith([
+      expect.objectContaining({
+        toolId: '510',
+        numberOfExecutions: 1,
+        actualEffortReduction: 15,
+        date: today,
+        customerName: 'MULTIPLE',
+        customerId: 'MULTIPLE',
+        receiverCostObject: 'MULTIPLE',
+        receiverRegion: 'MULTIPLE',
+        executor: 'MULTIPLE',
+        executorCostCenter: '144496124',
+      }),
+    ])
   })
 
-  test.each([cliTracker, webTracker])('consent question is not granted', (tracker) => {
-    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
-    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
-    vi.spyOn(tracker.consent, 'askConsentQuestion').mockReturnValue(Promise.resolve(false))
-    expect(tracker.requestConsentQuestion({})).resolves.toBeFalsy()
-    expect(spySetConsentGranted).not.toHaveBeenCalled()
+  test('trackUsage throws for unknown tool', async () => {
+    const tracker = new CliTracker(trackerArgs)
+    await expect(tracker.trackUsage({ toolName: 'NonExistentTool' })).rejects.toThrow('Tool not found: NonExistentTool')
   })
 
-  test.each([cliTracker, webTracker])('consent question is granted', async (tracker) => {
-    const consentResponse: boolean = true
-    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
-    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
-    const spyAccount = vi.spyOn(tracker.account, 'setConsent')
-    vi.spyOn(tracker.consent, 'askConsentQuestion').mockReturnValue(Promise.resolve(consentResponse))
-    await expect(tracker.requestConsentQuestion({})).resolves.toBeTruthy()
-    expect(spySetConsentGranted).toHaveBeenCalledWith(consentResponse, expect.stringContaining('@automated-usage-tracking-tool.sap'))
-    expect(spyAccount).toHaveBeenCalledWith(consentResponse, expect.stringContaining('@automated-usage-tracking-tool.sap'))
+  test('trackUsages sends batch reports to AOA', async () => {
+    const tracker = new CliTracker(trackerArgs)
+    await tracker.trackUsage({ toolName: 'Commerce Migration Toolkit' }) // trigger init
+    const spy = vi.spyOn(tracker.aoaClient!, 'sendTrackingReport')
+    await tracker.trackUsages([{ toolName: 'Commerce Migration Toolkit' }, { toolName: 'JRebel' }])
+    expect(spy).toHaveBeenCalledWith([
+      expect.objectContaining({ toolId: '510', actualEffortReduction: 15 }),
+      expect.objectContaining({ toolId: '532', actualEffortReduction: 45 }),
+    ])
   })
 
-  test.each([cliTracker, webTracker])('track usage without consent', (tracker) => {
-    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
-    const spySetLatestUsage = vi.spyOn(tracker.storage, 'setLatestUsage')
-    tracker.trackUsage({ toolName })
-    expect(spySetLatestUsage).not.toHaveBeenCalled()
+  test('does not throw when no config — tracking is silently disabled', async () => {
+    const originalEnv = { ...process.env }
+    delete process.env.AOA_CLIENT_ID
+    delete process.env.AOA_CLIENT_SECRET
+    delete process.env.AOA_TOKEN_URL
+    delete process.env.AOA_API_URL
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    try {
+      const tracker = new CliTracker()
+      // Constructor does NOT throw — lazy init
+      await tracker.trackUsage({ toolName: 'Commerce Migration Toolkit' })
+      expect(tracker.aoaClient).toBeNull()
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Tracking disabled'))
+    } finally {
+      warnSpy.mockRestore()
+      process.env = originalEnv
+    }
   })
 
-  test.each([cliTracker, webTracker])('track usage with consent', async (tracker) => {
-    const featureName: string = 'feature name'
-    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(true)
-    const spySetLatestUsage = vi.spyOn(tracker.storage, 'setLatestUsage')
-    const spyAccount = vi.spyOn(tracker.account, 'setLatestUsages')
-    await tracker.trackUsage({ toolName, featureName })
-    expect(spySetLatestUsage).toHaveBeenCalledWith(toolName, featureName)
-    expect(spyAccount).toHaveBeenCalled()
+  test('trackUsage is a no-op when unconfigured', async () => {
+    const originalEnv = { ...process.env }
+    delete process.env.AOA_CLIENT_ID
+    delete process.env.AOA_CLIENT_SECRET
+    vi.spyOn(console, 'warn').mockImplementation(() => {})
+    try {
+      const tracker = new CliTracker()
+      await expect(tracker.trackUsage({ toolName: 'Commerce Migration Toolkit' })).resolves.toBeUndefined()
+    } finally {
+      process.env = originalEnv
+    }
   })
 
-  test.each([cliTracker, webTracker])('track usage with provided consent question answer true', async (tracker) => {
-    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
-    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
-    const spyAccount = vi.spyOn(tracker.account, 'setConsent')
-    await expect(tracker.provideConsentQuestionAnswer({ email, message: 'yes' })).resolves.toBeTruthy()
-    expect(spySetConsentGranted).toHaveBeenCalledWith(true, email)
-    expect(spyAccount).toHaveBeenCalled()
+  test('reads config from environment variables', async () => {
+    const originalEnv = { ...process.env }
+    process.env.AOA_CLIENT_ID = 'env-client-id'
+    process.env.AOA_CLIENT_SECRET = 'env-client-secret'
+    process.env.AOA_TOKEN_URL = 'https://env-token-url'
+    process.env.AOA_API_URL = 'https://env-api-url'
+    try {
+      const tracker = new CliTracker()
+      await tracker.trackUsage({ toolName: 'Commerce Migration Toolkit' })
+      expect(tracker.aoaClient).not.toBeNull()
+    } finally {
+      process.env = originalEnv
+    }
   })
 
-  test.each([cliTracker, webTracker])('track usage with provided consent question answer false', async (tracker) => {
-    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
-    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
-    const spyAccount = vi.spyOn(tracker.account, 'setConsent')
-    await expect(tracker.provideConsentQuestionAnswer({ email, message: 'no' })).resolves.toBeFalsy()
-    expect(spySetConsentGranted).not.toHaveBeenCalled()
-    expect(spyAccount).not.toHaveBeenCalled()
+  test('tracking disabled when tokenUrl is missing', async () => {
+    const originalEnv = { ...process.env }
+    process.env.AOA_CLIENT_ID = 'env-client-id'
+    process.env.AOA_CLIENT_SECRET = 'env-client-secret'
+    delete process.env.AOA_TOKEN_URL
+    delete process.env.AOA_API_URL
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    try {
+      const tracker = new CliTracker()
+      await tracker.trackUsage({ toolName: 'Commerce Migration Toolkit' })
+      expect(tracker.aoaClient).toBeNull()
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Tracking disabled'))
+    } finally {
+      warnSpy.mockRestore()
+      process.env = originalEnv
+    }
   })
 
-  test.each([cliTracker, webTracker])('track usage with provided consent confirm answer true', async (tracker) => {
-    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
-    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
-    const spyAccount = vi.spyOn(tracker.account, 'setConsent')
-    await expect(tracker.provideConsentConfirmAnswer({ email, message: 'yes' })).resolves.toBeTruthy()
-    expect(spySetConsentGranted).toHaveBeenCalledWith(true, email)
-    expect(spyAccount).toHaveBeenCalled()
+  test('tracking disabled when apiUrl is missing', async () => {
+    const originalEnv = { ...process.env }
+    process.env.AOA_CLIENT_ID = 'env-client-id'
+    process.env.AOA_CLIENT_SECRET = 'env-client-secret'
+    process.env.AOA_TOKEN_URL = 'https://env-token-url'
+    delete process.env.AOA_API_URL
+    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
+    try {
+      const tracker = new CliTracker()
+      await tracker.trackUsage({ toolName: 'Commerce Migration Toolkit' })
+      expect(tracker.aoaClient).toBeNull()
+      expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining('Tracking disabled'))
+    } finally {
+      warnSpy.mockRestore()
+      process.env = originalEnv
+    }
   })
 
-  test.each([cliTracker, webTracker])('track usage with provided consent confirm answer false', async (tracker) => {
-    vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
-    const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
-    const spyAccount = vi.spyOn(tracker.account, 'setConsent')
-    await expect(tracker.provideConsentConfirmAnswer({ email, message: 'no' })).rejects.toBeFalsy()
-    expect(spySetConsentGranted).not.toHaveBeenCalled()
-    expect(spyAccount).not.toHaveBeenCalled()
+  test('constructor args take priority over env vars', async () => {
+    const originalEnv = { ...process.env }
+    process.env.AOA_CLIENT_ID = 'env-client-id'
+    process.env.AOA_CLIENT_SECRET = 'env-client-secret'
+    process.env.AOA_TOKEN_URL = 'https://env-token-url'
+    process.env.AOA_API_URL = 'https://env-api-url'
+    try {
+      const tracker = new CliTracker(trackerArgs)
+      await tracker.trackUsage({ toolName: 'Commerce Migration Toolkit' })
+      expect(tracker.aoaClient).not.toBeNull()
+    } finally {
+      process.env = originalEnv
+    }
+  })
+
+  test('only initializes once even with concurrent trackUsage calls', async () => {
+    const tracker = new CliTracker(trackerArgs)
+    const [r1, r2, r3] = await Promise.all([
+      tracker.trackUsage({ toolName: 'Commerce Migration Toolkit' }),
+      tracker.trackUsage({ toolName: 'JRebel' }),
+      tracker.trackUsage({ toolName: 'Commerce Migration Toolkit' }),
+    ])
+    expect(tracker.aoaClient).not.toBeNull()
   })
 })

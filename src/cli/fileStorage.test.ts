@@ -1,10 +1,8 @@
 import { describe, test, beforeEach, beforeAll, afterAll, expect, vi } from 'vitest'
 import FileStorage from './fileStorage'
 import fs from 'fs'
-import * as uuid from 'uuid'
 
 vi.mock('fs')
-vi.mock('uuid')
 
 describe('File Storage', () => {
   let storageLocation: string
@@ -83,7 +81,7 @@ describe('File Storage', () => {
 
   test('set latest usage', () => {
     consent = true
-    vi.spyOn(uuid, 'v4').mockReturnValue('id')
+    vi.spyOn(crypto, 'randomUUID').mockReturnValue('id' as `${string}-${string}-${string}-${string}-${string}`)
     vi.spyOn(fs, 'readFileSync').mockReturnValue(btoa(`{${getFileContentExceptUsages()},"latestUsages":[${getFileUsage('2020-02-01T13:58:00.000Z')}]}`))
     storage = new FileStorage(storageLocation)
 

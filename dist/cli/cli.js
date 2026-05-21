@@ -17,21 +17,25 @@ class Cli {
     constructor(trackerArguments) {
         this.tracker = new cliTracker_1.default(trackerArguments);
     }
+    /** @deprecated Consent is no longer required for AOA tracking. Always returns true. */
     requestConsentQuestion() {
         return __awaiter(this, arguments, void 0, function* (consentArguments = {}) {
             return yield this.tracker.requestConsentQuestion(consentArguments);
         });
     }
+    /** @deprecated Consent is no longer required for AOA tracking. Always returns true. */
     requestConsentConfirmation() {
         return __awaiter(this, arguments, void 0, function* (consentArguments = {}) {
             return yield this.tracker.requestConsentConfirmation(consentArguments);
         });
     }
+    /** @deprecated Consent is no longer required for AOA tracking. Always returns true. */
     provideConsentQuestionAnswer(consentArguments) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.tracker.provideConsentQuestionAnswer(consentArguments);
         });
     }
+    /** @deprecated Consent is no longer required for AOA tracking. Always returns true. */
     provideConsentConfirmAnswer(consentArguments) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield this.tracker.provideConsentConfirmAnswer(consentArguments);
@@ -42,8 +46,14 @@ class Cli {
             return yield this.tracker.trackUsage(trackUsageArguments);
         });
     }
+    trackUsages(trackUsageArguments) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.tracker.trackUsages(trackUsageArguments);
+        });
+    }
+    /** @deprecated Consent is always granted with AOA. Always returns true. */
     isConsentGranted() {
-        return this.tracker.storage.isConsentGranted();
+        return this.tracker.isConsentGranted();
     }
 }
 exports.default = Cli;
