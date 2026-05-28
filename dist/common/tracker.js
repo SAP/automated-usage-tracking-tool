@@ -64,7 +64,7 @@ function getChromeStorageItems(keys) {
         return {};
     });
 }
-const AOA_DEFAULT_TOKEN_URL = 'https://sapit-crossfunctions-prod-manx.authentication.eu10.hana.ondemand.com/oauth/token';
+const AOA_DEFAULT_TOKEN_URL = 'https://sapit-crossfunctions-prod-ragdoll.authentication.eu10.hana.ondemand.com/oauth/token';
 const AOA_DEFAULT_API_URL = 'https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com';
 const CDC_COMPLETION_WAIT_MS = 1500;
 const CONSENT_EMAIL_DOMAIN = '@automated-usage-tracking-tool.sap';
