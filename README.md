@@ -124,6 +124,68 @@ Configure OAuth2 credentials externally. The library resolves them automatically
 
 > **Only `clientId` and `clientSecret` are required.** `tokenUrl` and `apiUrl` default to the production environment.
 
+### Setting credentials
+
+#### Cloud Foundry
+
+```sh
+cf set-env <APP_NAME> AOA_CLIENT_ID "<xsuaa-client-id>"
+cf set-env <APP_NAME> AOA_CLIENT_SECRET "<xsuaa-client-secret>"
+cf set-env <APP_NAME> AOA_TOKEN_URL "<xsuaa-token-url>/oauth/token"   # Optional (defaults to production)
+cf set-env <APP_NAME> AOA_API_URL "<aoa-tracking-api-url>"            # Optional (defaults to production)
+
+# Apply changes
+cf restart <APP_NAME>
+```
+
+#### Browser (localStorage)
+
+In your browser's developer tools console:
+
+```js
+localStorage.setItem('aoaClientId', '<xsuaa-client-id>')
+localStorage.setItem('aoaClientSecret', '<xsuaa-client-secret>')
+localStorage.setItem('aoaTokenUrl', '<xsuaa-token-url>/oauth/token')  // Optional
+localStorage.setItem('aoaApiUrl', '<aoa-tracking-api-url>')           // Optional
+```
+
+#### Local Development
+
+**Option 1 — `.env` file (recommended):**
+
+```
+AOA_CLIENT_ID=<xsuaa-client-id>
+AOA_CLIENT_SECRET=<xsuaa-client-secret>
+AOA_TOKEN_URL=<xsuaa-token-url>/oauth/token   # Optional
+AOA_API_URL=<aoa-tracking-api-url>            # Optional
+```
+
+**Option 2 — Shell profile:**
+
+macOS (zsh):
+
+```sh
+echo 'export AOA_CLIENT_ID="<value>"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Linux (bash):
+
+```sh
+echo 'export AOA_CLIENT_ID="<value>"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+Windows (CMD):
+
+```cmd
+setx AOA_CLIENT_ID "<value>"
+```
+
+> **Note**: Repeat for each variable. On Windows, open a new terminal after `setx` for changes to take effect.
+
+> **Note**: The `AOA_*` variables are resolved automatically by the library — no code changes needed.
+
 ### Behaviour when both channels are configured
 
 `trackUsage()` executes CDC and AOA as independent channels:
