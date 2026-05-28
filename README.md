@@ -207,7 +207,7 @@ await trackingTool.trackUsages([
 
 ### Obtaining credentials
 
-Contact AIGNITEUserSupport@global.corp.sap to obtain your OAuth2 client ID and secret.
+To obtain the `AOA_CLIENT_ID` and `AOA_CLIENT_SECRET`, follow the getting credentials [documentation](https://wiki.one.int.sap/wiki/spaces/ASCAutoOps/pages/6091107779/Integration+using+classic+OAuth+flow#IntegrationusingclassicOAuthflow-2.Gettingthecredentials).
 
 ## Usage Examples
 
