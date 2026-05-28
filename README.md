@@ -122,7 +122,7 @@ Configure OAuth2 credentials externally. The library resolves them automatically
 | `chrome.storage.local` (extensions) | `aoaClientId` | `aoaClientSecret` |
 | Constructor | `clientId` | `clientSecret` |
 
-> **Only `clientId` and `clientSecret` are required.** `tokenUrl` and `apiUrl` default to the TEST environment. Override with `AOA_TOKEN_URL` / `AOA_API_URL` to point to production.
+> **Only `clientId` and `clientSecret` are required.** `tokenUrl` and `apiUrl` default to the production environment.
 
 ### Behaviour when both channels are configured
 
