@@ -1,5 +1,5 @@
 import { Component } from '@angular/core'
-import { trackUsage } from '../lib/automatedUsageTrackingToolWrapper'
+import { requestConsentConfirmation, requestConsentQuestion, trackUsage } from '../lib/automatedUsageTrackingToolWrapper'
 
 @Component({
   selector: 'app-root',
@@ -8,6 +8,14 @@ import { trackUsage } from '../lib/automatedUsageTrackingToolWrapper'
 })
 export class AppComponent {
   title = 'typescript-web-client'
+
+  requestConsentQuestionButtonClickHandler() {
+    requestConsentQuestion()
+  }
+
+  requestConsentConfirmationButtonClickHandler() {
+    requestConsentConfirmation()
+  }
 
   trackUsageButtonClickHandler() {
     trackUsage()

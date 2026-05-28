@@ -35,33 +35,18 @@ Open `index.html` in a web browser to see the application in action. The applica
 
 ## Automated Usage Tracking Tool
 
-The project integrates the automated-usage-tracking-tool to track automation usage via the AOA platform. The integration is handled in the `src/lib/automatedUsageTrackingToolWrapper.js` file.
+The project integrates the automated-usage-tracking-tool to track user interactions. The integration is handled in the `src/lib/automatedUsageTrackingToolWrapper.js` file.
 
-### Configuration (no code changes needed)
+## AOA Tracking (Optional)
 
-Credentials are resolved automatically by the library. Simply set the following keys in your browser's **localStorage**:
-
-| Key | Required | Description |
-|-----|----------|-------------|
-| `aoaClientId` | Yes | OAuth2 client ID |
-| `aoaClientSecret` | Yes | OAuth2 client secret |
-| `aoaTokenUrl` | Yes | OAuth2 token endpoint URL |
-| `aoaApiUrl` | Yes | AOA API base URL |
-
-Example:
+To additionally enable AOA tracking in the browser, set the following keys in `localStorage`:
 
 ```js
 localStorage.setItem('aoaClientId', 'your-client-id')
 localStorage.setItem('aoaClientSecret', 'your-client-secret')
-localStorage.setItem('aoaTokenUrl', 'https://your-token-url/oauth/token')
-localStorage.setItem('aoaApiUrl', 'https://your-api-url')
 ```
 
-> No code changes are required when updating the library — credentials are resolved automatically from localStorage.
-
-Alternatively, credentials can be injected at build time via environment variables (`AOA_CLIENT_ID`, `AOA_CLIENT_SECRET`) using Webpack's `DefinePlugin`.
-
-For full configuration details, see the [main README](../../README.md#configure-credentials).
+No code changes are needed — the library resolves credentials automatically. See the [main README](../../README.md#aoa-tracking-optional) for details.
 
 ## License
 

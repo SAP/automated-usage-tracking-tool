@@ -39,7 +39,18 @@ The build artifacts will be stored in the `dist/` directory.
 
 ## Automated Usage Tracking Tool
 
-The project integrates the automated-usage-tracking-tool to track automation usage via the AOA platform. Credentials are configured via environment variables (`AOA_CLIENT_ID`, `AOA_CLIENT_SECRET`) injected at build time (e.g. via Angular environment files). The integration is handled in the `src/lib/automatedUsageTrackingToolWrapper.ts` file.
+The project integrates the automated-usage-tracking-tool to track user interactions. The integration is handled in the `src/lib/automatedUsageTrackingToolWrapper.ts` file.
+
+## AOA Tracking (Optional)
+
+To additionally enable AOA tracking in the browser, set the following keys in `localStorage`:
+
+```js
+localStorage.setItem('aoaClientId', 'your-client-id')
+localStorage.setItem('aoaClientSecret', 'your-client-secret')
+```
+
+No code changes are needed — the library resolves credentials automatically. See the [main README](../../README.md#aoa-tracking-optional) for details.
 
 ## License
 

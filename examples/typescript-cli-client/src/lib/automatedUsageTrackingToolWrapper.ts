@@ -1,11 +1,26 @@
-import CliTracker, { TrackUsageArguments } from '@sap_oss/automated-usage-tracking-tool'
+import CliTracker, { ConsentArguments, TrackerArguments, TrackUsageArguments } from '@sap_oss/automated-usage-tracking-tool'
 
-// Credentials are read from environment variables:
-// AOA_CLIENT_ID, AOA_CLIENT_SECRET
-// Token URL and API URL default to production. Set AOA_TOKEN_URL / AOA_API_URL to override.
-const trackingTool = new CliTracker()
+const trackerArguments: TrackerArguments = { apiKey: '4_3OulQC05sfcJ-D5mG6aMNg', dataCenter: 'eu1' }
 
-const trackUsageArguments: TrackUsageArguments = { toolName: 'Commerce Migration Toolkit' }
+const consentArguments: ConsentArguments = {}
+
+const trackUsageArguments: TrackUsageArguments = { toolName: 'typescript-cli-client', featureName: 'example' }
+
+const trackingTool = new CliTracker(trackerArguments)
+
+export async function requestConsentConfirmation() {
+  // Request anonymous consent with a custom message
+  return await trackingTool.requestConsentConfirmation({
+    message: 'This is a customized request consent confirmation message.',
+  })
+}
+
+export async function requestConsentQuestion() {
+  // Request consent for a specific email
+  return await trackingTool.requestConsentQuestion({
+    email: 'example@test.com',
+  })
+}
 
 export async function trackUsage() {
   return await trackingTool.trackUsage(trackUsageArguments)

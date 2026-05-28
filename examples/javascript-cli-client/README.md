@@ -39,22 +39,11 @@ This is the entry point of the application. It imports and uses functions from [
 
 ### `src/lib/automatedUsageTrackingToolWrapper.js`
 
-This file contains the wrapper functions for the `@sap_oss/automated-usage-tracking-tool`. It initializes the tracker without explicit arguments — credentials are resolved automatically from environment variables.
+This file contains the wrapper functions for the `@sap_oss/automated-usage-tracking-tool`. It includes functions like [`trackUsage`](../examples/javascript-cli-client/src/lib/automatedUsageTrackingToolWrapper.js#L1) and [`trackUsageArguments`](../examples/javascript-cli-client/src/lib/automatedUsageTrackingToolWrapper.js#L2).
 
-### Configuration
+## AOA Tracking (Optional)
 
-Set the following environment variables (or add them to a `.env` file):
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `AOA_CLIENT_ID` | Yes | OAuth2 client ID |
-| `AOA_CLIENT_SECRET` | Yes | OAuth2 client secret |
-| `AOA_TOKEN_URL` | Yes | OAuth2 token endpoint URL |
-| `AOA_API_URL` | Yes | AOA API base URL |
-
-> No code changes are required when updating the library — credentials are resolved automatically.
-
-For full configuration details, see the [main README](../../README.md#configure-credentials).
+To additionally enable AOA tracking, set `AOA_CLIENT_ID` and `AOA_CLIENT_SECRET` as environment variables. No code changes are needed — the library resolves credentials automatically. See the [main README](../../README.md#aoa-tracking-optional) for details.
 
 ## License
 
