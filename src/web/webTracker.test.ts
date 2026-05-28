@@ -1,23 +1,42 @@
 import { describe, test, expect } from 'vitest'
 import WebTracker from './webTracker'
+import WebStorage from './webStorage'
+import WebConsent from './webConsent'
 import Tracker from '../common/tracker'
 
-describe('Web Tracker', () => {
-  const trackerArgs = {
-    clientId: 'test-client-id',
-    clientSecret: 'test-client-secret',
-    tokenUrl: 'https://auth.example.com/oauth/token',
-    apiUrl: 'https://api.example.com',
-  }
-  const tracker: Tracker = new WebTracker(trackerArgs)
+// @vitest-environment jsdom
 
-  test('web tracker should be an instance of Tracker', () => {
-    expect(tracker instanceof WebTracker).toBeTruthy()
-    expect(tracker instanceof Tracker).toBeTruthy()
-    expect(tracker.aoaClient).toBeDefined()
+const mockLocation = 'location'
+
+function setupLocalStorageMock() {
+  const mock = (function () {
+    const store: { [key: string]: any } = {}
+    return {
+      getItem: (key: string) => store[key],
+      setItem: (key: string, value: any) => (store[key] = value),
+    }
+  })()
+
+  Object.defineProperty(window, 'localStorage', {
+    value: mock,
+  })
+}
+
+describe('Web Tracker', () => {
+  const apiKey: string = 'apiKey'
+  const dataCenter: string = 'eu1'
+  const tracker: Tracker = new WebTracker({ apiKey, dataCenter })
+
+  test('web store and consent should have the right types', () => {
+    setupLocalStorageMock()
+    expect(tracker.storage instanceof WebStorage).toBeTruthy()
+    expect(tracker.consent instanceof WebConsent).toBeTruthy()
+    expect(tracker.apiKey).toEqual(apiKey)
+    expect(tracker.dataCenter).toEqual(dataCenter)
   })
 
-  test('isConsentGranted always returns true', () => {
-    expect(tracker.isConsentGranted()).toBe(true)
+  test('web tracker is instance of Tracker', () => {
+    expect(tracker instanceof WebTracker).toBeTruthy()
+    expect(tracker instanceof Tracker).toBeTruthy()
   })
 })

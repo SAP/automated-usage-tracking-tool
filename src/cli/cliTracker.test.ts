@@ -1,23 +1,23 @@
 import { describe, test, expect } from 'vitest'
 import CliTracker from './cliTracker'
+import FileStorage from './fileStorage'
+import CliConsent from './cliConsent'
 import Tracker from '../common/tracker'
 
 describe('CLI Tracker', () => {
-  const trackerArgs = {
-    clientId: 'test-client-id',
-    clientSecret: 'test-client-secret',
-    tokenUrl: 'https://auth.example.com/oauth/token',
-    apiUrl: 'https://api.example.com',
-  }
-  const tracker: Tracker = new CliTracker(trackerArgs)
+  const apiKey: string = 'apiKey'
+  const dataCenter: string = 'eu1'
+  const tracker: Tracker = new CliTracker({ apiKey, dataCenter })
 
-  test('cli tracker should be an instance of Tracker', () => {
-    expect(tracker instanceof CliTracker).toBeTruthy()
-    expect(tracker instanceof Tracker).toBeTruthy()
-    expect(tracker.aoaClient).toBeDefined()
+  test('cli store and consent should have the right types', () => {
+    expect(tracker.storage instanceof FileStorage).toBeTruthy()
+    expect(tracker.consent instanceof CliConsent).toBeTruthy()
+    expect(tracker.apiKey).toEqual(apiKey)
+    expect(tracker.dataCenter).toEqual(dataCenter)
   })
 
-  test('isConsentGranted always returns true', () => {
-    expect(tracker.isConsentGranted()).toBe(true)
+  test('cli tracker is instance of Tracker', () => {
+    expect(tracker instanceof CliTracker).toBeTruthy()
+    expect(tracker instanceof Tracker).toBeTruthy()
   })
 })

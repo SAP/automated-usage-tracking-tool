@@ -1,7 +1,11 @@
 import AOAClient, { AOAConfig, TrackingReport } from '../aoa/aoaClient'
 import { getToolByName } from '../aoa/toolRegistry'
+import Storage from './storage'
+import Account from '../gigya/account'
+import Consent from './consent'
+import { GigyaRetryOptions } from '../gigya/gigya'
 
-const FIXED_FIELDS = {
+const AOA_FIXED_FIELDS = {
   customerName: 'MULTIPLE',
   customerId: 'MULTIPLE',
   receiverCostObject: 'MULTIPLE',
@@ -10,7 +14,30 @@ const FIXED_FIELDS = {
   executorCostCenter: '144496124',
 }
 
+type TrackingChannel = 'CDC' | 'AOA'
 
+interface ChannelResult {
+  channel: TrackingChannel
+  success: boolean
+  error?: Error
+}
+
+class MultiChannelTrackingError extends Error {
+  channelErrors: Record<string, string>
+
+  constructor(results: ChannelResult[]) {
+    const failedResults = results.filter((result) => !result.success)
+    const details = failedResults
+      .map((result) => `${result.channel}: ${result.error?.message ?? 'Unknown error'}`)
+      .join('; ')
+    super(`Tracking failed for all configured channels. ${details}`)
+    this.name = 'MultiChannelTrackingError'
+    this.channelErrors = failedResults.reduce<Record<string, string>>((acc, result) => {
+      acc[result.channel] = result.error?.message ?? 'Unknown error'
+      return acc
+    }, {})
+  }
+}
 
 declare const chrome: {
   storage?: {
@@ -23,193 +50,291 @@ declare const chrome: {
 function getLocalStorageItem(key: string): string | undefined {
   try {
     if (typeof localStorage !== 'undefined') {
-      const value = localStorage.getItem(key) ?? undefined
-      if (value) console.debug(`[AOA] localStorage: found "${key}"`)
-      return value
+      return localStorage.getItem(key) ?? undefined
     }
   } catch {
-    console.debug(`[AOA] localStorage: not available`)
+    // localStorage not available
   }
   return undefined
 }
 
-function hasChromeStorageLocal(): boolean {
-  try {
-    const available = typeof chrome !== 'undefined' && !!chrome.storage?.local?.get
-    console.debug(`[AOA] chrome.storage.local: ${available ? 'available' : 'not available'}`)
-    return available
-  } catch {
-    console.debug('[AOA] chrome.storage.local: not available (error checking)')
-    return false
-  }
-}
-
 async function getChromeStorageItems(keys: string[]): Promise<Record<string, string | undefined>> {
-  if (!hasChromeStorageLocal()) return {}
   try {
-    const result = await chrome.storage!.local!.get(keys)
-    const foundKeys = Object.keys(result).filter((k) => result[k] !== undefined)
-    if (foundKeys.length > 0) {
-      console.debug(`[AOA] chrome.storage.local: found keys [${foundKeys.join(', ')}]`)
-    } else {
-      console.debug('[AOA] chrome.storage.local: no AOA keys found')
+    if (typeof chrome !== 'undefined' && chrome.storage?.local?.get) {
+      return await chrome.storage.local.get(keys)
     }
-    return result
-  } catch (e) {
-    console.debug('[AOA] chrome.storage.local: error reading -', e)
-    return {}
+  } catch {
+    // chrome.storage.local not available
   }
+  return {}
 }
 
-async function resolveConfigAsync(trackerArguments?: TrackerArguments): Promise<AOAConfig | null> {
-  console.debug('[AOA] Resolving configuration...')
-  console.debug('[AOA] Constructor args provided:', trackerArguments ? `clientId=${trackerArguments.clientId ? '***' : 'none'}, proxyUrl=${trackerArguments.proxyUrl || 'none'}` : 'none')
+const AOA_DEFAULT_TOKEN_URL = 'https://sapit-crossfunctions-test-manx.authentication.eu10.hana.ondemand.com/oauth/token'
+const AOA_DEFAULT_API_URL = 'https://asc-auto-ops-tracking-api-test.cfapps.eu10-004.hana.ondemand.com'
+const CDC_COMPLETION_WAIT_MS = 1500
+const CONSENT_EMAIL_DOMAIN = '@automated-usage-tracking-tool.sap'
 
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
+function hashIdentifier(value: string): string {
+  let hash = 2166136261
+  for (let i = 0; i < value.length; i += 1) {
+    hash ^= value.charCodeAt(i)
+    hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24)
+  }
+  return (hash >>> 0).toString(16)
+}
+
+function resolveConsentEmail(rawValue?: string): string {
+  const normalized = rawValue?.trim()
+  if (!normalized) {
+    return crypto.randomUUID() + CONSENT_EMAIL_DOMAIN
+  }
+
+  if (isValidEmail(normalized)) {
+    return normalized
+  }
+
+  const anonymizedId = hashIdentifier(normalized).slice(0, 10)
+  const randomPart = crypto.randomUUID().split('-')[0]
+  return `anon-${anonymizedId}-${randomPart}${CONSENT_EMAIL_DOMAIN}`
+}
+
+async function resolveAOAConfig(trackerArguments?: TrackerArguments): Promise<AOAConfig | null> {
   const env = typeof process !== 'undefined' && process.env ? process.env : ({} as Record<string, string | undefined>)
 
-  // Read chrome.storage.local (async) — highest priority after constructor args
   const chromeStorage = await getChromeStorageItems([
     'aoaClientId', 'aoaClientSecret', 'aoaTokenUrl', 'aoaApiUrl', 'aoaProxyUrl',
   ])
 
-  const config: AOAConfig = {
-    clientId: trackerArguments?.clientId ?? chromeStorage.aoaClientId ?? getLocalStorageItem('aoaClientId') ?? env.AOA_CLIENT_ID ?? '',
-    clientSecret: trackerArguments?.clientSecret ?? chromeStorage.aoaClientSecret ?? getLocalStorageItem('aoaClientSecret') ?? env.AOA_CLIENT_SECRET ?? '',
-    tokenUrl: trackerArguments?.tokenUrl ?? chromeStorage.aoaTokenUrl ?? getLocalStorageItem('aoaTokenUrl') ?? env.AOA_TOKEN_URL ?? '',
-    apiUrl: trackerArguments?.apiUrl ?? chromeStorage.aoaApiUrl ?? getLocalStorageItem('aoaApiUrl') ?? env.AOA_API_URL ?? '',
-    proxyUrl: trackerArguments?.proxyUrl ?? chromeStorage.aoaProxyUrl ?? getLocalStorageItem('aoaProxyUrl') ?? env.AOA_PROXY_URL ?? undefined,
-  }
+  const clientId = trackerArguments?.clientId ?? chromeStorage.aoaClientId ?? getLocalStorageItem('aoaClientId') ?? env.AOA_CLIENT_ID ?? ''
+  const clientSecret = trackerArguments?.clientSecret ?? chromeStorage.aoaClientSecret ?? getLocalStorageItem('aoaClientSecret') ?? env.AOA_CLIENT_SECRET ?? ''
+  const tokenUrl = trackerArguments?.tokenUrl ?? chromeStorage.aoaTokenUrl ?? getLocalStorageItem('aoaTokenUrl') ?? env.AOA_TOKEN_URL ?? AOA_DEFAULT_TOKEN_URL
+  const apiUrl = trackerArguments?.apiUrl ?? chromeStorage.aoaApiUrl ?? getLocalStorageItem('aoaApiUrl') ?? env.AOA_API_URL ?? AOA_DEFAULT_API_URL
+  const proxyUrl = trackerArguments?.proxyUrl ?? chromeStorage.aoaProxyUrl ?? getLocalStorageItem('aoaProxyUrl') ?? env.AOA_PROXY_URL ?? undefined
 
-  if (!config.clientId || !config.clientSecret || !config.tokenUrl || !config.apiUrl) {
-    const missing = [
-      !config.clientId && 'clientId',
-      !config.clientSecret && 'clientSecret',
-      !config.tokenUrl && 'tokenUrl',
-      !config.apiUrl && 'apiUrl',
-    ].filter(Boolean).join(', ')
-    console.debug(`[AOA] Config resolution result: MISSING fields (${missing})`)
+  const config: AOAConfig = { clientId, clientSecret, tokenUrl, apiUrl, proxyUrl }
+
+  if (!config.clientId || !config.clientSecret) {
     return null
   }
 
-  console.debug(`[AOA] Config resolution result: OK (clientId=***${config.clientId.slice(-4)}, tokenUrl=${config.tokenUrl}, apiUrl=${config.apiUrl}, proxyUrl=${config.proxyUrl || 'none'})`)
   return config
 }
 
-export default class Tracker {
+export default abstract class Tracker {
+  apiKey: string
+  dataCenter: string
+  storage: Storage
+  account: Account
+  consent: Consent
+
   aoaClient: AOAClient | null = null
   private trackerArguments?: TrackerArguments
-  private initPromise: Promise<void> | null = null
-  private initialized = false
+  private aoaInitPromise: Promise<void> | null = null
+  private aoaInitialized = false
 
-  constructor(trackerArguments?: TrackerArguments) {
-    console.debug('[AOA] Tracker instance created (lazy init — will resolve config on first trackUsage call)')
+  constructor(trackerArguments: TrackerArguments, storage: Storage, consent: Consent) {
+    this.apiKey = trackerArguments.apiKey ?? ''
+    this.dataCenter = trackerArguments.dataCenter ?? ''
+    this.storage = storage
+    this.consent = consent
     this.trackerArguments = trackerArguments
+
+    if (trackerArguments.apiKey && trackerArguments.dataCenter) {
+      this.account = new Account(trackerArguments.apiKey, trackerArguments.dataCenter, trackerArguments.cdcRetryOptions)
+    } else {
+      this.account = new Account('', '')
+    }
   }
 
-  private async ensureInitialized(): Promise<boolean> {
-    if (this.initialized) return this.aoaClient !== null
-    if (!this.initPromise) {
-      console.debug('[AOA] First tracking call — initializing...')
-      this.initPromise = this.init()
+  private async ensureAOAInitialized(): Promise<boolean> {
+    if (this.aoaInitialized) return this.aoaClient !== null
+    if (!this.aoaInitPromise) {
+      this.aoaInitPromise = this.initAOA()
     }
-    await this.initPromise
+    await this.aoaInitPromise
     return this.aoaClient !== null
   }
 
-  private async init(): Promise<void> {
-    const config = await resolveConfigAsync(this.trackerArguments)
+  private async initAOA(): Promise<void> {
+    const config = await resolveAOAConfig(this.trackerArguments)
     if (config) {
       this.aoaClient = new AOAClient(config)
-      console.debug('[AOA] Tracking initialized successfully.')
-    } else {
-      console.warn('[AOA] Tracking disabled: configuration incomplete. Required keys: aoaClientId, aoaClientSecret, aoaTokenUrl, aoaApiUrl. Set them via chrome.storage.local, localStorage, or environment variables (AOA_CLIENT_ID, AOA_CLIENT_SECRET, AOA_TOKEN_URL, AOA_API_URL).')
     }
-    this.initialized = true
+    this.aoaInitialized = true
   }
 
-  /** @deprecated Consent is no longer required for AOA tracking. Always returns true. */
-  async requestConsentQuestion(_consentArguments?: ConsentArguments): Promise<boolean> {
-    return true
+  async requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.requestConsent(this.consent.askConsentQuestion.bind(this.consent), consentArguments)
   }
 
-  /** @deprecated Consent is no longer required for AOA tracking. Always returns true. */
-  async requestConsentConfirmation(_consentArguments?: ConsentArguments): Promise<boolean> {
-    return true
+  async requestConsentConfirmation(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.requestConsent(this.consent.askConsentConfirm.bind(this.consent), consentArguments)
   }
 
-  /** @deprecated Consent is no longer required for AOA tracking. Always returns true. */
-  async provideConsentQuestionAnswer(_consentArguments?: ConsentArguments): Promise<boolean> {
-    return true
+  public async provideConsentQuestionAnswer(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.requestConsent(this.consent.provideConsentQuestionAnswer.bind(this.consent), consentArguments)
   }
 
-  /** @deprecated Consent is no longer required for AOA tracking. Always returns true. */
-  async provideConsentConfirmAnswer(_consentArguments?: ConsentArguments): Promise<boolean> {
-    return true
-  }
-
-  /** @deprecated Consent is always granted with AOA. Always returns true. */
-  isConsentGranted(): boolean {
-    return true
+  public async provideConsentConfirmAnswer(consentArguments: ConsentArguments): Promise<boolean> {
+    return await this.requestConsent(this.consent.provideConsentConfirmAnswer.bind(this.consent), consentArguments)
   }
 
   async trackUsage(trackUsageArguments: TrackUsageArguments): Promise<void> {
-    console.debug(`[AOA] trackUsage called: toolName="${trackUsageArguments.toolName}"`)
-    const ready = await this.ensureInitialized()
-    if (!ready) {
-      console.debug('[AOA] trackUsage skipped: not configured')
+    const cdcEnabled = this.apiKey.length > 0 && this.dataCenter.length > 0 && this.storage.isConsentGranted()
+    const aoaEnabled = await this.ensureAOAInitialized()
+
+    if (!cdcEnabled && !aoaEnabled) {
+      console.info('[TRACKING] No channel configured or eligible for tracking. Skipping.')
       return
     }
-    const report = this.buildReport(trackUsageArguments)
-    console.debug(`[AOA] Sending report: toolId=${report.toolId}, date=${report.date}`)
-    await this.aoaClient!.sendTrackingReport([report])
-    console.debug('[AOA] Report sent successfully')
+
+    const cdcPromise = cdcEnabled
+      ? this.executeChannel('CDC', async () => {
+        this.storage.setLatestUsage(trackUsageArguments.toolName, trackUsageArguments.featureName)
+        await this.account.setLatestUsages(this.storage.getEmail(), this.storage.getLatestUsages())
+      })
+      : null
+
+    const aoaPromise = aoaEnabled
+      ? this.executeChannel('AOA', async () => {
+        const report = this.buildAOAReport(trackUsageArguments)
+        await this.aoaClient!.sendTrackingReport([report])
+      })
+      : null
+
+    if (!aoaPromise && cdcPromise) {
+      const cdcResult = await cdcPromise
+      if (!cdcResult.success) {
+        throw cdcResult.error
+      }
+      console.info('[TRACKING] Completed. CDC=success, AOA=not-configured')
+      return
+    }
+
+    if (!cdcPromise && aoaPromise) {
+      const aoaResult = await aoaPromise
+      if (!aoaResult.success) {
+        throw aoaResult.error
+      }
+      console.info('[TRACKING] Completed. CDC=not-configured, AOA=success')
+      return
+    }
+
+    const aoaResult = await aoaPromise!
+    if (aoaResult.success) {
+      const cdcResult = await this.waitForCdcWithinWindow(cdcPromise!)
+      if (cdcResult) {
+        const cdcStatus = cdcResult.success ? 'success' : 'failure'
+        const details = cdcResult.error ? ` (${cdcResult.error.message})` : ''
+        console.info(`[TRACKING] Completed with success via AOA. CDC=${cdcStatus}${details}`)
+      } else {
+        console.info(`[TRACKING] Completed with success via AOA. CDC still running after ${CDC_COMPLETION_WAIT_MS}ms window.`)
+        void cdcPromise!.then((resolvedCdcResult) => {
+          const cdcStatus = resolvedCdcResult.success ? 'success' : 'failure'
+          const details = resolvedCdcResult.error ? ` (${resolvedCdcResult.error.message})` : ''
+          console.info(`[TRACKING] Final channel status update. CDC=${cdcStatus}${details}, AOA=success`)
+        })
+      }
+      return
+    }
+
+    const cdcResult = await cdcPromise!
+    if (cdcResult.success) {
+      console.error(`[TRACKING] Completed with failure. CDC=success, AOA=failure (${aoaResult.error?.message ?? 'Unknown error'})`)
+      throw aoaResult.error
+    }
+
+    const aggregatedError = new MultiChannelTrackingError([cdcResult, aoaResult])
+    console.error(`[TRACKING] Completed with failure. CDC=failure (${cdcResult.error?.message ?? 'Unknown error'}), AOA=failure (${aoaResult.error?.message ?? 'Unknown error'})`)
+    throw aggregatedError
+  }
+
+  private async executeChannel(channel: TrackingChannel, action: () => Promise<void>): Promise<ChannelResult> {
+    console.info(`[${channel}] start`)
+    try {
+      await action()
+      console.info(`[${channel}] success`)
+      return { channel, success: true }
+    } catch (error) {
+      const channelError = error instanceof Error ? error : new Error(String(error))
+      console.error(`[${channel}] failure: ${channelError.message}`)
+      return {
+        channel,
+        success: false,
+        error: channelError,
+      }
+    }
+  }
+
+  private async waitForCdcWithinWindow(cdcPromise: Promise<ChannelResult>): Promise<ChannelResult | null> {
+    let timeoutId: ReturnType<typeof setTimeout> | null = null
+    const timeoutPromise = new Promise<null>((resolve) => {
+      timeoutId = setTimeout(() => resolve(null), CDC_COMPLETION_WAIT_MS)
+    })
+    const result = await Promise.race<ChannelResult | null>([cdcPromise, timeoutPromise])
+    if (timeoutId) {
+      clearTimeout(timeoutId)
+    }
+    return result
   }
 
   async trackUsages(trackUsageArguments: TrackUsageArguments[]): Promise<void> {
-    console.debug(`[AOA] trackUsages called: ${trackUsageArguments.length} items`)
-    const ready = await this.ensureInitialized()
-    if (!ready) {
-      console.debug('[AOA] trackUsages skipped: not configured')
-      return
-    }
-    const reports = trackUsageArguments.map((args) => this.buildReport(args))
-    console.debug(`[AOA] Sending ${reports.length} reports`)
+    const ready = await this.ensureAOAInitialized()
+    if (!ready) return
+    const reports = trackUsageArguments.map((args) => this.buildAOAReport(args))
     await this.aoaClient!.sendTrackingReport(reports)
-    console.debug('[AOA] Reports sent successfully')
   }
 
-  private buildReport(args: TrackUsageArguments): TrackingReport {
-    const tool = getToolByName(args.toolName)
+  isConsentGranted(): boolean {
+    return this.storage.isConsentGranted()
+  }
 
+  private buildAOAReport(args: TrackUsageArguments): TrackingReport {
+    const tool = getToolByName(args.toolName)
     if (!tool) {
       throw new Error(`Tool not found: ${args.toolName}`)
     }
-
     return {
       toolId: tool.toolId,
       numberOfExecutions: 1,
       actualEffortReduction: tool.actualEffortReduction,
       date: new Date().toISOString().split('T')[0],
-      ...FIXED_FIELDS,
+      ...AOA_FIXED_FIELDS,
     }
+  }
+
+  private async requestConsent(consentFunction: ConsentFunction, consentArguments: ConsentArguments): Promise<boolean> {
+    if (!this.storage.isConsentGranted()) {
+      const consentResponse = await consentFunction(consentArguments.message)
+      if (consentResponse) {
+        const email = resolveConsentEmail(consentArguments.email)
+        this.storage.setConsentGranted(consentResponse, email)
+        await this.account.setConsent(consentResponse, email)
+      }
+      return consentResponse
+    }
+    return true
   }
 }
 
+type ConsentFunction = (message?: string) => Promise<boolean>
+
 export interface TrackerArguments {
+  apiKey?: string
+  dataCenter?: string
+  storageName?: string
+  cdcRetryOptions?: GigyaRetryOptions
   clientId?: string
   clientSecret?: string
   tokenUrl?: string
   apiUrl?: string
   proxyUrl?: string
-  /** @deprecated No longer used. Kept for backward compatibility. */
-  apiKey?: string
-  /** @deprecated No longer used. Kept for backward compatibility. */
-  dataCenter?: string
-  /** @deprecated No longer used. Kept for backward compatibility. */
-  storageName?: string
 }
 
-/** @deprecated Consent is no longer required for AOA tracking. */
 export interface ConsentArguments {
   email?: string
   message?: string
@@ -217,6 +342,5 @@ export interface ConsentArguments {
 
 export interface TrackUsageArguments {
   toolName: string
-  /** @deprecated No longer used. Kept for backward compatibility. */
   featureName?: string
 }

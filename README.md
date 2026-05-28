@@ -4,17 +4,21 @@
 
 ## About this project
 
-The Automated Usage Tracking Tool is designed to help developers track automation usage within their JavaScript and TypeScript applications using the [AOA (Automation Operations Analytics)](https://aoa-prod.cfapps.eu10-004.hana.ondemand.com) platform via OAuth2 API.
+The Automated Usage Tracking Tool is designed to help developers track user interactions within their JavaScript and TypeScript applications using [SAP Customer Data Cloud](https://help.sap.com/docs/SAP_CUSTOMER_DATA_CLOUD).
 
-By integrating this tool, you can automatically report automation executions and effort reduction metrics to AOA, providing valuable insights into automation adoption and effectiveness.
+By integrating this tool, you can gather insights into how users interact with various features of your application, which can be invaluable for improving user experience and making data-driven decisions.
+
+This version adds **AOA (Automation Operations Analytics)** tracking alongside the existing Legacy (Gigya) path. AOA is enabled automatically when credentials are configured externally — **no code changes are required** when updating the library.
 
 ### Key features
 
-- **Automatic Data Population**: Tool ID, effort reduction, and execution count are automatically resolved from the tool name via a built-in registry.
-- **Zero-Code Configuration**: OAuth2 credentials are resolved automatically from `localStorage` (web) or environment variables (CLI) — no code changes needed when updating the library.
-- **Minimal Integration**: Users only need to provide the `toolName` — everything else is handled automatically.
+- **Consent Management**: The tool provides built-in methods to request user consent for tracking, ensuring compliance with privacy regulations.
+- **Feature Usage Tracking**: Easily track how often specific features of your application are used.
+- **Customizable Storage**: Optionally specify a custom storage name for tracking data.
 - **Web and CLI Support**: The tool supports both web and command-line interface (CLI) applications.
-- **Batch Tracking**: Send multiple tracking reports in a single API call with `trackUsages()`.
+- **Theme Support**: For web applications, you can apply the [`sap_horizon`](#themes) theme to the consent dialog for a consistent look and feel.
+- **AOA Tracking**: Automatically sends reports to AOA when `clientId` and `clientSecret` are configured via environment variables, `localStorage`, or `chrome.storage.local`. Defaults to the TEST environment — no code changes needed.
+- **Batch Tracking**: Send multiple tracking reports in a single API call with `trackUsages()` (AOA only).
 
 ## Requirements and Setup
 
@@ -37,20 +41,38 @@ Install @sap_oss/automated-usage-tracking-tool as a dependency of the new projec
 npm install @sap_oss/automated-usage-tracking-tool
 ```
 
-### Configure credentials
+### Configure AOA credentials (no code changes needed)
 
-The library resolves credentials automatically using the following priority order:
+To enable AOA tracking, simply configure the credentials externally. The library resolves them automatically using the following priority order:
 
-1. **Constructor arguments** (explicit, highest priority)
+1. **Constructor arguments** (passed to `new TrackingTool({ clientId, clientSecret, ... })`)
 2. **`chrome.storage.local`** (Chrome Extensions — private, persistent, works across all domains)
 3. **`localStorage`** (web applications — shared with the page)
 4. **Environment variables** (CLI / Node.js applications)
 
-> **All four fields are required**: `clientId`, `clientSecret`, `tokenUrl`, and `apiUrl`. If any is missing, tracking is silently disabled.
+> **Only `clientId` and `clientSecret` are required.** The `tokenUrl` and `apiUrl` default to the **TEST environment** and can be overridden to point to production.
 
-> **Note**: Configuration is resolved lazily on the first `trackUsage()` call, not at construction time. This means credentials can be set after the tracker is instantiated.
+| Field | Default (TEST) |
+|-------|----------------|
+| `tokenUrl` | `https://sapit-crossfunctions-test-manx.authentication.eu10.hana.ondemand.com/oauth/token` |
+| `apiUrl` | `https://asc-auto-ops-tracking-api-test.cfapps.eu10-004.hana.ondemand.com` |
 
-This means you can configure credentials **without changing any code** — simply set the values in the appropriate location for your environment.
+Both tracking paths (Legacy + AOA) run simultaneously when both sets of credentials are available. No code changes are required — just update the library version and configure the credentials.
+
+`trackUsage()` executes Legacy (CDC/Gigya) and AOA as independent channels (best effort per channel):
+
+- If AOA is configured and succeeds, the call resolves even if CDC fails.
+- If only one configured channel fails, the call rejects.
+- If both channels fail, the call rejects with a channel-aware aggregated error.
+- If no channel is configured/eligible, the call remains a no-op.
+
+CDC requests now use bounded retries with exponential backoff + jitter and error classification:
+
+- Retryable categories: transient network errors and CDC rate-limit/API retry codes.
+- Non-retryable categories: malformed/non-JSON responses (for example HTML error pages).
+- Diagnostics include `step`, `attempt`, `elapsedMs`, `statusCode`, and CDC error details.
+
+> **Note**: AOA configuration is resolved lazily on the first `trackUsage()` call. This means credentials can be set after the tracker is instantiated.
 
 ---
 
@@ -63,8 +85,9 @@ For Chrome Extensions with the `"storage"` permission, credentials can be stored
 chrome.storage.local.set({
   aoaClientId: 'your-client-id',
   aoaClientSecret: 'your-client-secret',
-  aoaTokenUrl: 'https://your-token-url/oauth/token',
-  aoaApiUrl: 'https://your-api-url',
+  // Optional overrides (default to TEST environment):
+  // aoaTokenUrl: 'https://sapit-crossfunctions-prod-manx.authentication.eu10.hana.ondemand.com/oauth/token',
+  // aoaApiUrl: 'https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com',
 })
 ```
 
@@ -79,8 +102,9 @@ Set the following keys in your browser's localStorage. This can be done once via
 ```js
 localStorage.setItem('aoaClientId', 'your-client-id')
 localStorage.setItem('aoaClientSecret', 'your-client-secret')
-localStorage.setItem('aoaTokenUrl', 'https://your-token-url/oauth/token')
-localStorage.setItem('aoaApiUrl', 'https://your-api-url')
+// Optional overrides (default to TEST environment):
+// localStorage.setItem('aoaTokenUrl', 'https://sapit-crossfunctions-prod-manx.authentication.eu10.hana.ondemand.com/oauth/token')
+// localStorage.setItem('aoaApiUrl', 'https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com')
 ```
 
 > **Advantage**: When you update the library version, no code changes are required — the credentials are already in localStorage.
@@ -96,8 +120,9 @@ Set the following environment variables with your AOA OAuth2 credentials (provid
 ```sh
 export AOA_CLIENT_ID="your-client-id"
 export AOA_CLIENT_SECRET="your-client-secret"
-export AOA_TOKEN_URL="https://your-token-url/oauth/token"
-export AOA_API_URL="https://your-api-url"
+# Optional overrides (default to TEST environment):
+# export AOA_TOKEN_URL="https://sapit-crossfunctions-prod-manx.authentication.eu10.hana.ondemand.com/oauth/token"
+# export AOA_API_URL="https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com"
 ```
 
 Or create a `.env` file in your project root:
@@ -105,8 +130,9 @@ Or create a `.env` file in your project root:
 ```
 AOA_CLIENT_ID=your-client-id
 AOA_CLIENT_SECRET=your-client-secret
-AOA_TOKEN_URL=https://your-token-url/oauth/token
-AOA_API_URL=https://your-api-url
+# Optional overrides (default to TEST environment):
+# AOA_TOKEN_URL=https://sapit-crossfunctions-prod-manx.authentication.eu10.hana.ondemand.com/oauth/token
+# AOA_API_URL=https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com
 ```
 
 > **Note on special characters**: Some credentials may contain special characters (`$`, `!`, `=`) that can be interpreted differently depending on your configuration method:
@@ -165,24 +191,21 @@ import TrackingTool from '@sap_oss/automated-usage-tracking-tool'
 
 ### Initialize the tracker
 
-If credentials are already configured via localStorage or environment variables, no arguments are needed:
-
-```js
-const trackingTool = new TrackingTool()
-```
-
-> **No code changes required on library update** — as long as credentials are set in localStorage (web) or environment variables (CLI), the tracker initializes automatically.
-
-Or with explicit configuration (highest priority, overrides localStorage and environment variables):
-
 ```js
 const trackingTool = new TrackingTool({
-  clientId: 'your-client-id',
-  clientSecret: 'your-client-secret',
-  tokenUrl: 'https://your-token-url/oauth/token',
-  apiUrl: 'https://your-api-url',
+  apiKey: [apiKey],
+  dataCenter: [dataCenter],
+  storageName: [storageName], // Optional
+  cdcRetryOptions: {          // Optional
+    maxRetries: 4,
+    baseDelayMs: 400,
+    maxDelayMs: 5000,
+    jitterRatio: 0.2,
+  },
 })
 ```
+
+> **No code changes required to enable AOA**: If `aoaClientId` and `aoaClientSecret` are configured via environment variables, `localStorage`, or `chrome.storage.local`, the library automatically sends tracking reports to AOA **in addition** to the legacy (Gigya) path (defaulting to the TEST environment). Simply update the library version and configure the credentials externally. To switch to production, override `aoaTokenUrl` and `aoaApiUrl`.
 
 ### Track Usages
 
@@ -207,12 +230,40 @@ await trackingTool.trackUsages([
 ])
 ```
 
+### Request Consent (Legacy)
+
+Ask for consent confirmation or ask the consent question to the user.
+
+**Note:** If the consent was already granted, the consent dialog will not be shown (no extra validations needed). This is only relevant for the Legacy (Gigya) tracking path. AOA tracking does not require consent.
+
+```js
+await trackingTool.requestConsentConfirmation() // Possible Answer: Yes (or exit app)
+// OR
+await trackingTool.requestConsentQuestion() // Possible Answers: Yes or No
+```
+
+### Themes
+
+For the web version, there is the option to import the sap_horizon theme to be applied to the consent dialog
+
+```js
+import '@sap_oss/automated-usage-tracking-tool/theme/sap_horizon.css'
+```
+
 ### Types
 
 Types are available for Typescript client applications.
 
 ```js
-import { TrackerArguments, TrackUsageArguments } from '@sap_oss/automated-usage-tracking-tool'
+import { TrackerArguments, TrackUsageArguments, ConsentArguments } from '@sap_oss/automated-usage-tracking-tool'
+```
+
+### Extra: Check If The Consent Was Already Granted
+
+**This method is not necessary for the implementation** (as this is performed behind the scenes), but it can be used to check if the consent was already granted if you want to use that information in your application.
+
+```js
+trackingTool.isConsentGranted()
 ```
 
 ### Browser / CORS Limitations
@@ -279,11 +330,10 @@ Credentials can be stored in `chrome.storage.local` (see [Option A](#option-a-ch
 
 If you are migrating from the previous Gigya-based version:
 
-1. **Replace constructor arguments**: Change `{ apiKey, dataCenter }` to localStorage keys (`aoaClientId`, `aoaClientSecret`), environment variables (`AOA_CLIENT_ID`, `AOA_CLIENT_SECRET`), or pass them explicitly as `{ clientId, clientSecret }`.
-2. **Update trackUsage calls**: Change `{ toolName, featureName }` to `{ toolName }` using the registered tool name. The `toolName` must match exactly one of the tools in the built-in registry.
-3. **Remove consent calls**: `requestConsentConfirmation()`, `requestConsentQuestion()`, etc. still work but are no-ops (always return `true`). They can be safely removed.
-4. **Remove hardcoded credentials**: You can now remove credentials from your code entirely and use localStorage (web) or environment variables (CLI) instead.
-5. **Handle CORS**: If your application runs in the browser, you will need a proxy solution (see [Browser / CORS Limitations](#browser--cors-limitations) above). The previous Gigya-based API supported CORS; the new AOA/XSUAA endpoint does not.
+1. **No code changes required**: Your existing code using `{ apiKey, dataCenter }` continues to work exactly as before.
+2. **To enable AOA tracking**: Update the library version and configure `aoaClientId` and `aoaClientSecret` externally (environment variables, localStorage, or chrome.storage.local). The library defaults to the TEST environment — override `aoaTokenUrl` and `aoaApiUrl` to point to production. Both tracking paths will run simultaneously — no code changes needed.
+3. **Batch tracking**: The new `trackUsages()` method sends multiple reports in a single call (AOA only).
+4. **Handle CORS** (AOA in browser): The AOA/XSUAA token endpoint does not support CORS. If your application runs in the browser, you will need a proxy solution (see [Browser / CORS Limitations](#browser--cors-limitations) above). The legacy Gigya API is not affected by this.
 
 ## Usage Examples
 
