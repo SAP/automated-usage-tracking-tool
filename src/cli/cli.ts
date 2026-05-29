@@ -28,10 +28,6 @@ export default class Cli {
     return await this.tracker.trackUsage(trackUsageArguments)
   }
 
-  async trackUsages(trackUsageArguments: TrackUsageArguments[]): Promise<void> {
-    return await this.tracker.trackUsages(trackUsageArguments)
-  }
-
   isConsentGranted(): boolean {
     return this.tracker.storage.isConsentGranted()
   }

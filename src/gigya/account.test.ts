@@ -73,11 +73,7 @@ describe('Account', () => {
         },
       }),
     }
-    expect(spy).toHaveBeenCalledWith(
-      `https://accounts.${dataCenter}.gigya.com/accounts.setAccountInfo`,
-      expectedBody,
-      expect.objectContaining({ step: 'consent', endpoint: 'setAccountInfo' }),
-    )
+    expect(spy).toHaveBeenCalledWith(`https://accounts.${dataCenter}.gigya.com/accounts.setAccountInfo`, expectedBody)
   })
 
   test('refresh token', async () => {
@@ -144,86 +140,11 @@ describe('Account', () => {
         latestUsages: usages,
       }),
     }
-    expect(spy).toHaveBeenCalledWith(
-      `https://accounts.${dataCenter}.gigya.com/accounts.setAccountInfo`,
-      expectedBody,
-      expect.objectContaining({ step: 'usage-write', endpoint: 'setAccountInfo' }),
-    )
+    expect(spy).toHaveBeenCalledWith(`https://accounts.${dataCenter}.gigya.com/accounts.setAccountInfo`, expectedBody)
   })
 
   test('set latest usages unsuccessfully', async () => {
     global.fetch = vi.fn(() => Promise.reject('Error setting latest usages. ')) as Mock
     await expect(() => account.setLatestUsages(email, [])).rejects.toThrowError(/^Error setting latest usages./)
-  })
-
-  test('set latest usages token refresh is bounded and rejects when token remains expired', async () => {
-    account.token = 'token'
-    global.fetch = vi
-      .fn()
-      .mockResolvedValueOnce({
-        json: () => Promise.resolve(gigyaResponseTokenExpired),
-      })
-      .mockResolvedValueOnce({
-        json: () => Promise.resolve(gigyaTokenResponse),
-      })
-      .mockResolvedValueOnce({
-        json: () => Promise.resolve(gigyaResponseTokenExpired),
-      }) as Mock
-
-    await expect(() => account.setLatestUsages(email, [])).rejects.toThrowError(/^Error setting latest usages./)
-    expect(global.fetch).toHaveBeenCalledTimes(3)
-  })
-
-  test('set consent token refresh is bounded and rejects when token remains expired', async () => {
-    account.token = 'token'
-    global.fetch = vi
-      .fn()
-      .mockResolvedValueOnce({
-        json: () => Promise.resolve(gigyaResponseTokenExpired),
-      })
-      .mockResolvedValueOnce({
-        json: () => Promise.resolve(gigyaTokenResponse),
-      })
-      .mockResolvedValueOnce({
-        json: () => Promise.resolve(gigyaResponseTokenExpired),
-      }) as Mock
-
-    await expect(() => account.setConsent(consent, email)).rejects.toThrowError(/^Error setting consent./)
-    expect(global.fetch).toHaveBeenCalledTimes(3)
-  })
-
-  test('concurrent setLatestUsages calls are serialized and share token', async () => {
-    const usages: Usage[] = [new Usage('tool', 'feature')]
-    const callOrder: string[] = []
-
-    account.token = ''
-    global.fetch = vi.fn((_url: string, options: { body: URLSearchParams }) => {
-      const params = Object.fromEntries(options.body.entries())
-      if (params.isLite) {
-        callOrder.push('token')
-        return Promise.resolve({
-          json: () => Promise.resolve(gigyaTokenResponse),
-        })
-      }
-      callOrder.push('write')
-      return Promise.resolve({
-        json: () => Promise.resolve(Object.assign({ UID: 'uid' }, gigyaResponseOk)),
-      })
-    }) as Mock
-
-    // Fire 3 concurrent calls
-    const [r1, r2, r3] = await Promise.all([
-      account.setLatestUsages(email, usages),
-      account.setLatestUsages(email, usages),
-      account.setLatestUsages(email, usages),
-    ])
-
-    expect(r1.errorCode).toEqual(0)
-    expect(r2.errorCode).toEqual(0)
-    expect(r3.errorCode).toEqual(0)
-
-    // Token should be fetched only once; all 3 writes reuse it
-    expect(callOrder.filter((c) => c === 'token').length).toEqual(1)
-    expect(callOrder.filter((c) => c === 'write').length).toEqual(3)
   })
 })

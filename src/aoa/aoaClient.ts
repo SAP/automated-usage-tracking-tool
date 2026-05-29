@@ -1,3 +1,5 @@
+import { getToolByName } from './toolRegistry'
+
 export interface AOAConfig {
   clientId: string
   clientSecret: string
@@ -264,5 +266,81 @@ export default class AOAClient {
     throw new Error(
       `AOA tracking error (${response.status}): ${errorBody.errorMessage}${errorBody.detailedErrors ? ' - ' + JSON.stringify(errorBody.detailedErrors) : ''}`,
     )
+  }
+
+  async trackUsage(toolName: string): Promise<void> {
+    const report = buildReport(toolName)
+    await this.sendTrackingReport([report])
+  }
+
+
+}
+
+// --- Config resolution ---
+
+const AOA_DEFAULT_TOKEN_URL = 'https://sapit-crossfunctions-prod-ragdoll.authentication.eu10.hana.ondemand.com/oauth/token'
+const AOA_DEFAULT_API_URL = 'https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com'
+
+export interface AOATrackerOptions {
+  clientId?: string
+  clientSecret?: string
+  tokenUrl?: string
+  apiUrl?: string
+  proxyUrl?: string
+}
+
+function getEnv(key: string): string | undefined {
+  try {
+    return typeof process !== 'undefined' && process.env ? process.env[key] : undefined
+  } catch {
+    return undefined
+  }
+}
+
+function getLocalStorageItem(key: string): string | undefined {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      return localStorage.getItem(key) ?? undefined
+    }
+  } catch {
+    return undefined
+  }
+}
+
+export function createAOAClient(options?: AOATrackerOptions): AOAClient | null {
+  const clientId = options?.clientId ?? getLocalStorageItem('aoaClientId') ?? getEnv('AOA_CLIENT_ID') ?? ''
+  const clientSecret = options?.clientSecret ?? getLocalStorageItem('aoaClientSecret') ?? getEnv('AOA_CLIENT_SECRET') ?? ''
+
+  if (!clientId || !clientSecret) return null
+
+  const tokenUrl = options?.tokenUrl ?? getLocalStorageItem('aoaTokenUrl') ?? getEnv('AOA_TOKEN_URL') ?? AOA_DEFAULT_TOKEN_URL
+  const apiUrl = options?.apiUrl ?? getLocalStorageItem('aoaApiUrl') ?? getEnv('AOA_API_URL') ?? AOA_DEFAULT_API_URL
+  const proxyUrl = options?.proxyUrl ?? getLocalStorageItem('aoaProxyUrl') ?? getEnv('AOA_PROXY_URL') ?? undefined
+
+  return new AOAClient({ clientId, clientSecret, tokenUrl, apiUrl, proxyUrl })
+}
+
+// --- Report building ---
+
+const AOA_FIXED_FIELDS = {
+  customerName: 'MULTIPLE',
+  customerId: 'MULTIPLE',
+  receiverCostObject: 'MULTIPLE',
+  receiverRegion: 'MULTIPLE',
+  executor: 'MULTIPLE',
+  executorCostCenter: '144496124',
+}
+
+function buildReport(toolName: string): TrackingReport {
+  const tool = getToolByName(toolName)
+  if (!tool) {
+    throw new Error(`Tool not found in registry: ${toolName}`)
+  }
+  return {
+    toolId: tool.toolId,
+    numberOfExecutions: 1,
+    actualEffortReduction: tool.actualEffortReduction,
+    date: new Date().toISOString().split('T')[0],
+    ...AOA_FIXED_FIELDS,
   }
 }
