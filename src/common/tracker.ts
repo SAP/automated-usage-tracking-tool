@@ -56,7 +56,7 @@ export default abstract class Tracker {
     if (!this.storage.isConsentGranted()) {
       const consentResponse = await consentFunction(consentArguments.message)
       if (consentResponse) {
-        const email = consentArguments.email ?? ''
+        const email: string = consentArguments.email ? consentArguments.email : crypto.randomUUID() + '@automated-usage-tracking-tool.sap'
         this.storage.setConsentGranted(consentResponse, email)
         await this.account.setConsent(consentResponse, email)
       }

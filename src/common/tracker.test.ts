@@ -75,8 +75,8 @@ describe('Tracker', () => {
     const spyAccount = vi.spyOn(tracker.account, 'setConsent')
     vi.spyOn(tracker.consent, 'askConsentQuestion').mockReturnValue(Promise.resolve(consentResponse))
     await expect(tracker.requestConsentQuestion({})).resolves.toBeTruthy()
-    expect(spySetConsentGranted).toHaveBeenCalledWith(consentResponse, '')
-    expect(spyAccount).toHaveBeenCalledWith(consentResponse, '')
+    expect(spySetConsentGranted).toHaveBeenCalledWith(consentResponse, expect.stringContaining('@automated-usage-tracking-tool.sap'))
+    expect(spyAccount).toHaveBeenCalledWith(consentResponse, expect.stringContaining('@automated-usage-tracking-tool.sap'))
   })
 
   test.each([cliTracker, webTracker])('track usage without consent', (tracker) => {
