@@ -1,7 +1,7 @@
 {
   "name": "@sap_oss/automated-usage-tracking-tool",
   "version": "1.1.4",
-  "description": "Automated usage tracking tool is a user-centric data collection tool, using a Customer Data Cloud tenant, that tracks the usage of CX IAS's automation tools, generates comprehensive reports for evaluating tool effectiveness and improvements.",
+  "description": "Automated usage tracking tool that integrates with AOA (Automation Operations Analytics) to track automation usage via OAuth2 API, generating comprehensive reports for evaluating tool effectiveness and improvements.",
   "main": "dist/cli/index.js",
   "browser": "dist/web/index.js",
   "module": "dist/web/index.js",
@@ -25,21 +25,22 @@
   },
   "homepage": "https://github.com/SAP/automated-usage-tracking-tool#readme",
   "devDependencies": {
-    "eslint": "^9.37.0",
-    "globals": "^16.4.0",
-    "typescript": "^5.9.3",
-    "prettier": "^3.6.2",
     "@types/node": "24.7.2",
     "@types/node-fetch": "^2.6.13",
-    "vitest": "^3.2.4",
+    "@types/uuid": "^10.0.0",
     "@vitest/coverage-v8": "^3.2.4",
+    "eslint": "^9.37.0",
+    "globals": "^16.4.0",
+    "jsdom": "^27.0.0",
     "mock-stdin": "^1.0.0",
-    "jsdom": "^27.0.0"
+    "prettier": "^3.6.2",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
   },
   "dependencies": {
     "dotenv": "^17.2.3",
     "ts-node": "^10.9.2",
-    "uuid": "^13.0.0"
+    "uuid": "^14.0.0"
   },
   "contributors": [
     "Bruno Santos",
