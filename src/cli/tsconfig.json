@@ -107,5 +107,5 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
   "include": ["../common/*", "../aoa/*", "../gigya/*", "./*"],
-  "exclude": ["../common/*.test.ts", "../aoa/*.test.ts", "../gigya/*.test.ts", "./*.test.ts"]
+  "exclude": ["../common/*.test.ts", "../aoa/*.test.ts", "../gigya/*.test.ts", "../gigya/*.dataTest.ts", "./*.test.ts"]
 }

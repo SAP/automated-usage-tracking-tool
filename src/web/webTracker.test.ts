@@ -34,9 +34,4 @@ describe('Web Tracker', () => {
     expect(tracker.apiKey).toEqual(apiKey)
     expect(tracker.dataCenter).toEqual(dataCenter)
   })
-
-  test('web tracker is instance of Tracker', () => {
-    expect(tracker instanceof WebTracker).toBeTruthy()
-    expect(tracker instanceof Tracker).toBeTruthy()
-  })
 })

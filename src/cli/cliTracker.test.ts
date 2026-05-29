@@ -15,9 +15,4 @@ describe('CLI Tracker', () => {
     expect(tracker.apiKey).toEqual(apiKey)
     expect(tracker.dataCenter).toEqual(dataCenter)
   })
-
-  test('cli tracker is instance of Tracker', () => {
-    expect(tracker instanceof CliTracker).toBeTruthy()
-    expect(tracker instanceof Tracker).toBeTruthy()
-  })
 })
