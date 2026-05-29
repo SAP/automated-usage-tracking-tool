@@ -18,7 +18,7 @@ export default abstract class Tracker {
     this.account = new Account(this.apiKey, this.dataCenter)
     this.storage = storage
     this.consent = consent
-    this.aoaClient = createAOAClient(trackerArguments)
+    this.aoaClient = createAOAClient()
   }
 
   async requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean> {
@@ -72,11 +72,6 @@ export interface TrackerArguments {
   apiKey: string
   dataCenter: string
   storageName?: string
-  clientId?: string
-  clientSecret?: string
-  tokenUrl?: string
-  apiUrl?: string
-  proxyUrl?: string
 }
 
 export interface ConsentArguments {
