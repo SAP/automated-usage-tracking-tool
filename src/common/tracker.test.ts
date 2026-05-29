@@ -147,7 +147,7 @@ describe('Tracker', () => {
   })
 
   test.each([cliTracker, webTracker])('track usage with provided consent confirm answer and invalid email anonymizes identity', async (tracker) => {
-    const invalidIdentity = 'I507070'
+    const invalidIdentity = 'I123456'
     vi.spyOn(tracker.storage, 'isConsentGranted').mockReturnValue(false)
     const spySetConsentGranted = vi.spyOn(tracker.storage, 'setConsentGranted')
     const spyAccount = vi.spyOn(tracker.account, 'setConsent')
