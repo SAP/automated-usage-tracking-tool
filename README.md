@@ -52,8 +52,8 @@ import TrackingTool from '@sap_oss/automated-usage-tracking-tool'
 
 ```js
 const trackingTool = new TrackingTool({
-  apiKey: [apiKey],
-  dataCenter: [dataCenter],
+  apiKey: [apiKey],         // Required for CDC tracking
+  dataCenter: [dataCenter], // Required for CDC tracking
   storageName: [storageName], // Optional
 })
 ```
@@ -77,7 +77,7 @@ Track usages of your application features.
 **Note**: If the consent was not granted, the usage will not be tracked (no extra validations needed).
 
 ```js
-trackingTool.trackUsage({
+await trackingTool.trackUsage({
   toolName: [toolName],
   featureName: [featureName],
 })
@@ -106,6 +106,108 @@ import { TrackerArguments, TrackUsageArguments, ConsentArguments } from '@sap_os
 ```js
 trackingTool.isConsentGranted()
 ```
+
+## AOA Tracking (Optional)
+
+In addition to the existing CDC (Gigya) tracking, you can optionally enable **AOA (Automation Operations Analytics)** as a second tracking channel. The CDC flow continues to work exactly as before — AOA is purely additive.
+
+### How to enable
+
+Configure OAuth2 credentials externally. The library resolves them automatically (no code changes needed):
+
+| Method | Client ID key | Client Secret key |
+|--------|---------------|-------------------|
+| Environment variables | `AOA_CLIENT_ID` | `AOA_CLIENT_SECRET` |
+| `localStorage` (web) | `aoaClientId` | `aoaClientSecret` |
+| `chrome.storage.local` (extensions) | `aoaClientId` | `aoaClientSecret` |
+| Constructor | `clientId` | `clientSecret` |
+
+> **Only `clientId` and `clientSecret` are required.** `tokenUrl` and `apiUrl` default to the production environment.
+
+### Setting credentials
+
+#### Cloud Foundry
+
+```sh
+cf set-env <APP_NAME> AOA_CLIENT_ID "<xsuaa-client-id>"
+cf set-env <APP_NAME> AOA_CLIENT_SECRET "<xsuaa-client-secret>"
+cf set-env <APP_NAME> AOA_TOKEN_URL "<xsuaa-token-url>/oauth/token"   # Optional (defaults to production)
+cf set-env <APP_NAME> AOA_API_URL "<aoa-tracking-api-url>"            # Optional (defaults to production)
+
+# Apply changes
+cf restart <APP_NAME>
+```
+
+#### Browser (localStorage)
+
+In your browser's developer tools console:
+
+```js
+localStorage.setItem('aoaClientId', '<xsuaa-client-id>')
+localStorage.setItem('aoaClientSecret', '<xsuaa-client-secret>')
+localStorage.setItem('aoaTokenUrl', '<xsuaa-token-url>/oauth/token')  // Optional
+localStorage.setItem('aoaApiUrl', '<aoa-tracking-api-url>')           // Optional
+```
+
+#### Local Development
+
+**Option 1 — `.env` file (recommended):**
+
+```
+AOA_CLIENT_ID=<xsuaa-client-id>
+AOA_CLIENT_SECRET=<xsuaa-client-secret>
+AOA_TOKEN_URL=<xsuaa-token-url>/oauth/token   # Optional
+AOA_API_URL=<aoa-tracking-api-url>            # Optional
+```
+
+**Option 2 — Shell profile:**
+
+macOS (zsh):
+
+```sh
+echo 'export AOA_CLIENT_ID="<value>"' >> ~/.zshrc
+source ~/.zshrc
+```
+
+Linux (bash):
+
+```sh
+echo 'export AOA_CLIENT_ID="<value>"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+Windows (CMD):
+
+```cmd
+setx AOA_CLIENT_ID "<value>"
+```
+
+> **Note**: Repeat for each variable. On Windows, open a new terminal after `setx` for changes to take effect.
+
+> **Note**: The `AOA_*` variables are resolved automatically by the library — no code changes needed.
+
+### Behaviour when both channels are configured
+
+`trackUsage()` executes CDC and AOA as independent channels:
+
+- If AOA succeeds, the call resolves even if CDC fails.
+- If only CDC is configured and it fails, the call rejects.
+- If only AOA is configured and it fails, the call rejects.
+- If both fail, the call rejects with a channel-aware error.
+- If no channel is configured/eligible, the call is a no-op.
+
+### Batch Tracking (AOA only)
+
+```js
+await trackingTool.trackUsages([
+  { toolName: 'JRebel' },
+  { toolName: 'Commerce Migration Toolkit' },
+])
+```
+
+### Obtaining credentials
+
+To obtain the `AOA_CLIENT_ID` and `AOA_CLIENT_SECRET`, follow the getting credentials [documentation](https://wiki.one.int.sap/wiki/spaces/ASCAutoOps/pages/6091107779/Integration+using+classic+OAuth+flow#IntegrationusingclassicOAuthflow-2.Gettingthecredentials).
 
 ## Usage Examples
 

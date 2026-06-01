@@ -7,6 +7,7 @@ export default abstract class Tracker {
     storage: Storage;
     account: Account;
     consent: Consent;
+    private aoaClient;
     constructor(trackerArguments: TrackerArguments, storage: Storage, consent: Consent);
     requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean>;
     requestConsentConfirmation(consentArguments: ConsentArguments): Promise<boolean>;

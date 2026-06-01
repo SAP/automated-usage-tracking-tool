@@ -1,6 +1,7 @@
 import Storage from './storage'
 import Account from '../gigya/account'
 import Consent from './consent'
+import AOAClient, { createAOAClient } from '../aoa/aoaClient'
 
 export default abstract class Tracker {
   apiKey: string
@@ -9,12 +10,15 @@ export default abstract class Tracker {
   account: Account
   consent: Consent
 
+  private aoaClient: AOAClient | null = null
+
   constructor(trackerArguments: TrackerArguments, storage: Storage, consent: Consent) {
     this.apiKey = trackerArguments.apiKey
     this.dataCenter = trackerArguments.dataCenter
     this.account = new Account(this.apiKey, this.dataCenter)
     this.storage = storage
     this.consent = consent
+    this.aoaClient = createAOAClient()
   }
 
   async requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean> {
@@ -37,6 +41,14 @@ export default abstract class Tracker {
     if (this.storage.isConsentGranted()) {
       this.storage.setLatestUsage(trackUsageArguments.toolName, trackUsageArguments.featureName)
       await this.account.setLatestUsages(this.storage.getEmail(), this.storage.getLatestUsages())
+    }
+
+    if (this.aoaClient) {
+      try {
+        await this.aoaClient.trackUsage(trackUsageArguments.toolName)
+      } catch (error) {
+        console.error('[AOA] tracking failed:', error instanceof Error ? error.message : error)
+      }
     }
   }
 
