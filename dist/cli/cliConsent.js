@@ -43,6 +43,9 @@ class CliConsent extends consent_1.default {
             });
         };
     }
+    warnAOAMissing(message = consent_1.default.aoaMissingMessage) {
+        console.warn(`[AOA] ${message}`);
+    }
 }
 exports.default = CliConsent;
 //# sourceMappingURL=cliConsent.js.map

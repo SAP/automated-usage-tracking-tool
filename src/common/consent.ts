@@ -4,8 +4,12 @@ export default abstract class Consent {
     ' By installing this app, you agree to share this information with SAP.' +
     ' If you wish to revoke your consent, please uninstall the app. Do you want to continue?'
 
+  static aoaMissingMessage: string =
+    'AOA tracking is not configured. Please provide AOA_CLIENT_ID and AOA_CLIENT_SECRET to enable AOA tracking.'
+
   abstract askConsentConfirm(): Promise<boolean>
   abstract askConsentQuestion(): Promise<boolean>
+  abstract warnAOAMissing(message?: string): void
 
   provideConsentConfirmAnswer(consent: string = Consent.message): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {

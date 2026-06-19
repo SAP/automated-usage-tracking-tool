@@ -29,4 +29,8 @@ export default class CliConsent extends Consent {
       })
     })
   }
+
+  warnAOAMissing(message: string = Consent.aoaMissingMessage): void {
+    console.warn(`[AOA] ${message}`)
+  }
 }

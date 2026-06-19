@@ -15,5 +15,6 @@ class Consent {
 Consent.message = 'This app collects anonymous usage data to help deliver and improve this product.' +
     ' By installing this app, you agree to share this information with SAP.' +
     ' If you wish to revoke your consent, please uninstall the app. Do you want to continue?';
+Consent.aoaMissingMessage = 'AOA tracking is not configured. Please provide AOA_CLIENT_ID and AOA_CLIENT_SECRET to enable AOA tracking.';
 exports.default = Consent;
 //# sourceMappingURL=consent.js.map

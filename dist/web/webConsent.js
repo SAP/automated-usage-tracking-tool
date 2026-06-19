@@ -7,7 +7,7 @@ var __classPrivateFieldGet = (this && this.__classPrivateFieldGet) || function (
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var _WebConsent_instances, _WebConsent_dialogId, _WebConsent_dialogContentId, _WebConsent_dialogFooterId, _WebConsent_dialogConfirmButtonId, _WebConsent_dialogDeclineButtonId, _WebConsent_setDialog, _WebConsent_getConfirmDialogHTML, _WebConsent_getConfirmDialog, _WebConsent_getDialogButton, _WebConsent_setEventHandler, _WebConsent_confirmDialogExists, _WebConsent_insertConfirmDialog, _WebConsent_commonButtonHandler, _WebConsent_confirmButtonHandler, _WebConsent_declineButtonHandler, _WebConsent_preventEscape;
+var _WebConsent_instances, _WebConsent_dialogId, _WebConsent_dialogContentId, _WebConsent_dialogFooterId, _WebConsent_dialogConfirmButtonId, _WebConsent_dialogDeclineButtonId, _WebConsent_warningDialogId, _WebConsent_setDialog, _WebConsent_getConfirmDialogHTML, _WebConsent_getConfirmDialog, _WebConsent_getDialogButton, _WebConsent_setEventHandler, _WebConsent_confirmDialogExists, _WebConsent_insertConfirmDialog, _WebConsent_commonButtonHandler, _WebConsent_confirmButtonHandler, _WebConsent_declineButtonHandler, _WebConsent_preventEscape;
 Object.defineProperty(exports, "__esModule", { value: true });
 const consent_1 = __importDefault(require("../common/consent"));
 class WebConsent extends consent_1.default {
@@ -19,6 +19,30 @@ class WebConsent extends consent_1.default {
         _WebConsent_dialogFooterId.set(this, `${__classPrivateFieldGet(this, _WebConsent_dialogId, "f")}-footer`);
         _WebConsent_dialogConfirmButtonId.set(this, `${__classPrivateFieldGet(this, _WebConsent_dialogId, "f")}-confirm-button`);
         _WebConsent_dialogDeclineButtonId.set(this, `${__classPrivateFieldGet(this, _WebConsent_dialogId, "f")}-decline-button`);
+        _WebConsent_warningDialogId.set(this, `${__classPrivateFieldGet(this, _WebConsent_dialogId, "f")}-warning`);
+    }
+    warnAOAMissing(message = consent_1.default.aoaMissingMessage) {
+        if (typeof document === 'undefined') {
+            console.warn(`[AOA] ${message}`);
+            return;
+        }
+        if (!document.getElementById(__classPrivateFieldGet(this, _WebConsent_warningDialogId, "f"))) {
+            const html = `
+        <dialog id="${__classPrivateFieldGet(this, _WebConsent_warningDialogId, "f")}" style="padding: 4px;">
+          <div id="${__classPrivateFieldGet(this, _WebConsent_warningDialogId, "f")}-content">${message}</div>
+          <div id="${__classPrivateFieldGet(this, _WebConsent_warningDialogId, "f")}-footer" style="text-align: center; padding-top: 10px;">
+            <button id="${__classPrivateFieldGet(this, _WebConsent_warningDialogId, "f")}-close-button">OK</button>
+          </div>
+        </dialog>`;
+            document.body.insertAdjacentHTML('beforeend', html);
+            document.getElementById(`${__classPrivateFieldGet(this, _WebConsent_warningDialogId, "f")}-close-button`).addEventListener('click', () => {
+                document.getElementById(__classPrivateFieldGet(this, _WebConsent_warningDialogId, "f")).close();
+            });
+        }
+        const dialog = document.getElementById(__classPrivateFieldGet(this, _WebConsent_warningDialogId, "f"));
+        if (dialog.showModal) {
+            dialog.showModal();
+        }
     }
     askConsentConfirm(message = consent_1.default.message) {
         // Only allows yes
@@ -33,7 +57,7 @@ class WebConsent extends consent_1.default {
         });
     }
 }
-_WebConsent_dialogId = new WeakMap(), _WebConsent_dialogContentId = new WeakMap(), _WebConsent_dialogFooterId = new WeakMap(), _WebConsent_dialogConfirmButtonId = new WeakMap(), _WebConsent_dialogDeclineButtonId = new WeakMap(), _WebConsent_instances = new WeakSet(), _WebConsent_setDialog = function _WebConsent_setDialog(confirmButtonHandler, declineButtonHandler, isConfirmDialog, message) {
+_WebConsent_dialogId = new WeakMap(), _WebConsent_dialogContentId = new WeakMap(), _WebConsent_dialogFooterId = new WeakMap(), _WebConsent_dialogConfirmButtonId = new WeakMap(), _WebConsent_dialogDeclineButtonId = new WeakMap(), _WebConsent_warningDialogId = new WeakMap(), _WebConsent_instances = new WeakSet(), _WebConsent_setDialog = function _WebConsent_setDialog(confirmButtonHandler, declineButtonHandler, isConfirmDialog, message) {
     if (!__classPrivateFieldGet(this, _WebConsent_instances, "m", _WebConsent_confirmDialogExists).call(this)) {
         __classPrivateFieldGet(this, _WebConsent_instances, "m", _WebConsent_insertConfirmDialog).call(this, isConfirmDialog, message);
         __classPrivateFieldGet(this, _WebConsent_instances, "m", _WebConsent_setEventHandler).call(this, __classPrivateFieldGet(this, _WebConsent_instances, "m", _WebConsent_getDialogButton).call(this, __classPrivateFieldGet(this, _WebConsent_dialogConfirmButtonId, "f")), 'click', confirmButtonHandler);

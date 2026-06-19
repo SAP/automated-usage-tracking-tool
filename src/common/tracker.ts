@@ -19,6 +19,10 @@ export default abstract class Tracker {
     this.storage = storage
     this.consent = consent
     this.aoaClient = createAOAClient()
+
+    if (!this.aoaClient) {
+      this.consent.warnAOAMissing()
+    }
   }
 
   async requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean> {

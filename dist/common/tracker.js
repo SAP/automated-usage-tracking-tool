@@ -23,6 +23,9 @@ class Tracker {
         this.storage = storage;
         this.consent = consent;
         this.aoaClient = (0, aoaClient_1.createAOAClient)();
+        if (!this.aoaClient) {
+            this.consent.warnAOAMissing();
+        }
     }
     requestConsentQuestion(consentArguments) {
         return __awaiter(this, void 0, void 0, function* () {
