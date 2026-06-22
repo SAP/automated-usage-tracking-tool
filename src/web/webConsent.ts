@@ -6,31 +6,6 @@ export default class WebConsent extends Consent {
   #dialogFooterId = `${this.#dialogId}-footer`
   #dialogConfirmButtonId = `${this.#dialogId}-confirm-button`
   #dialogDeclineButtonId = `${this.#dialogId}-decline-button`
-  #warningDialogId = `${this.#dialogId}-warning`
-
-  warnAOAMissing(message: string = Consent.aoaMissingMessage) {
-    if (typeof document === 'undefined') {
-      console.warn(`[AOA] ${message}`)
-      return
-    }
-    if (!document.getElementById(this.#warningDialogId)) {
-      const html = `
-        <dialog id="${this.#warningDialogId}" style="padding: 4px;">
-          <div id="${this.#warningDialogId}-content">${message}</div>
-          <div id="${this.#warningDialogId}-footer" style="text-align: center; padding-top: 10px;">
-            <button id="${this.#warningDialogId}-close-button">OK</button>
-          </div>
-        </dialog>`
-      document.body.insertAdjacentHTML('beforeend', html)
-      document.getElementById(`${this.#warningDialogId}-close-button`)!.addEventListener('click', () => {
-        (document.getElementById(this.#warningDialogId) as HTMLDialogElement).close()
-      })
-    }
-    const dialog = document.getElementById(this.#warningDialogId) as HTMLDialogElement
-    if (dialog.showModal) {
-      dialog.showModal()
-    }
-  }
 
   askConsentConfirm(message: string = Consent.message) {
     // Only allows yes
