@@ -1,14 +1,15 @@
 import Storage from './storage';
 import Account from '../gigya/account';
 import Consent from './consent';
+import AoaTracker from '../aoa/aoaTracker';
 export default abstract class Tracker {
     apiKey: string;
     dataCenter: string;
     storage: Storage;
     account: Account;
     consent: Consent;
-    private aoaClient;
-    constructor(trackerArguments: TrackerArguments, storage: Storage, consent: Consent);
+    private aoaTracker;
+    constructor(trackerArguments: TrackerArguments, storage: Storage, consent: Consent, aoaTracker: AoaTracker);
     requestConsentQuestion(consentArguments: ConsentArguments): Promise<boolean>;
     requestConsentConfirmation(consentArguments: ConsentArguments): Promise<boolean>;
     provideConsentQuestionAnswer(consentArguments: ConsentArguments): Promise<boolean>;

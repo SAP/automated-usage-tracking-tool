@@ -13,16 +13,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const account_1 = __importDefault(require("../gigya/account"));
-const aoaClient_1 = require("../aoa/aoaClient");
 class Tracker {
-    constructor(trackerArguments, storage, consent) {
-        this.aoaClient = null;
+    constructor(trackerArguments, storage, consent, aoaTracker) {
         this.apiKey = trackerArguments.apiKey;
         this.dataCenter = trackerArguments.dataCenter;
         this.account = new account_1.default(this.apiKey, this.dataCenter);
         this.storage = storage;
         this.consent = consent;
-        this.aoaClient = (0, aoaClient_1.createAOAClient)();
+        this.aoaTracker = aoaTracker;
     }
     requestConsentQuestion(consentArguments) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -50,14 +48,7 @@ class Tracker {
                 this.storage.setLatestUsage(trackUsageArguments.toolName, trackUsageArguments.featureName);
                 yield this.account.setLatestUsages(this.storage.getEmail(), this.storage.getLatestUsages());
             }
-            if (this.aoaClient) {
-                try {
-                    yield this.aoaClient.trackUsage(trackUsageArguments.toolName);
-                }
-                catch (error) {
-                    console.error('[AOA] tracking failed:', error instanceof Error ? error.message : error);
-                }
-            }
+            yield this.aoaTracker.trackUsage(trackUsageArguments.toolName);
         });
     }
     requestConsent(consentFunction, consentArguments) {

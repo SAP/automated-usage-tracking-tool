@@ -1,9 +1,10 @@
+export declare const AOA_DEFAULT_TOKEN_URL = "https://sapit-crossfunctions-prod-ragdoll.authentication.eu10.hana.ondemand.com/oauth/token";
+export declare const AOA_DEFAULT_API_URL = "https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com";
 export interface AOAConfig {
     clientId: string;
     clientSecret: string;
     tokenUrl: string;
     apiUrl: string;
-    proxyUrl?: string;
 }
 export interface TrackingReport {
     toolId: string;
@@ -30,11 +31,3 @@ export default class AOAClient {
     sendTrackingReport(reports: TrackingReport[]): Promise<void>;
     trackUsage(toolName: string): Promise<void>;
 }
-export interface AOATrackerOptions {
-    clientId?: string;
-    clientSecret?: string;
-    tokenUrl?: string;
-    apiUrl?: string;
-    proxyUrl?: string;
-}
-export declare function createAOAClient(options?: AOATrackerOptions): AOAClient | null;
