@@ -3,7 +3,6 @@ export interface AOAConfig {
     clientSecret: string;
     tokenUrl: string;
     apiUrl: string;
-    proxyUrl?: string;
 }
 export interface TrackingReport {
     toolId: string;
@@ -30,11 +29,4 @@ export default class AOAClient {
     sendTrackingReport(reports: TrackingReport[]): Promise<void>;
     trackUsage(toolName: string): Promise<void>;
 }
-export interface AOATrackerOptions {
-    clientId?: string;
-    clientSecret?: string;
-    tokenUrl?: string;
-    apiUrl?: string;
-    proxyUrl?: string;
-}
-export declare function createAOAClient(options?: AOATrackerOptions): AOAClient | null;
+export declare function createAOAClient(): AOAClient | null;

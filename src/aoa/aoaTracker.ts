@@ -1,4 +1,4 @@
-import AOAClient, { createAOAClient, AOATrackerOptions } from './aoaClient'
+import AOAClient, { createAOAClient } from './aoaClient'
 
 const AOA_MISSING_MESSAGE =
   'AOA tracking is not configured. Please provide AOA_CLIENT_ID and AOA_CLIENT_SECRET to enable AOA tracking.'
@@ -6,8 +6,8 @@ const AOA_MISSING_MESSAGE =
 export default abstract class AoaTracker {
   private client: AOAClient | null
 
-  constructor(options?: AOATrackerOptions) {
-    this.client = createAOAClient(options)
+  constructor() {
+    this.client = createAOAClient()
   }
 
   protected abstract warnMissing(message: string): void

@@ -92,14 +92,14 @@ function getLocalStorageItem(key) {
         return undefined;
     }
 }
-function createAOAClient(options) {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-    const clientId = (_c = (_b = (_a = options === null || options === void 0 ? void 0 : options.clientId) !== null && _a !== void 0 ? _a : getLocalStorageItem('aoaClientId')) !== null && _b !== void 0 ? _b : getEnv('AOA_CLIENT_ID')) !== null && _c !== void 0 ? _c : '';
-    const clientSecret = (_f = (_e = (_d = options === null || options === void 0 ? void 0 : options.clientSecret) !== null && _d !== void 0 ? _d : getLocalStorageItem('aoaClientSecret')) !== null && _e !== void 0 ? _e : getEnv('AOA_CLIENT_SECRET')) !== null && _f !== void 0 ? _f : '';
+function createAOAClient() {
+    var _a, _b, _c, _d, _e, _f, _g, _h;
+    const clientId = (_b = (_a = getLocalStorageItem('aoaClientId')) !== null && _a !== void 0 ? _a : getEnv('AOA_CLIENT_ID')) !== null && _b !== void 0 ? _b : '';
+    const clientSecret = (_d = (_c = getLocalStorageItem('aoaClientSecret')) !== null && _c !== void 0 ? _c : getEnv('AOA_CLIENT_SECRET')) !== null && _d !== void 0 ? _d : '';
     if (!clientId || !clientSecret)
         return null;
-    const tokenUrl = (_j = (_h = (_g = options === null || options === void 0 ? void 0 : options.tokenUrl) !== null && _g !== void 0 ? _g : getLocalStorageItem('aoaTokenUrl')) !== null && _h !== void 0 ? _h : getEnv('AOA_TOKEN_URL')) !== null && _j !== void 0 ? _j : AOA_DEFAULT_TOKEN_URL;
-    const apiUrl = (_m = (_l = (_k = options === null || options === void 0 ? void 0 : options.apiUrl) !== null && _k !== void 0 ? _k : getLocalStorageItem('aoaApiUrl')) !== null && _l !== void 0 ? _l : getEnv('AOA_API_URL')) !== null && _m !== void 0 ? _m : AOA_DEFAULT_API_URL;
+    const tokenUrl = (_f = (_e = getLocalStorageItem('aoaTokenUrl')) !== null && _e !== void 0 ? _e : getEnv('AOA_TOKEN_URL')) !== null && _f !== void 0 ? _f : AOA_DEFAULT_TOKEN_URL;
+    const apiUrl = (_h = (_g = getLocalStorageItem('aoaApiUrl')) !== null && _g !== void 0 ? _g : getEnv('AOA_API_URL')) !== null && _h !== void 0 ? _h : AOA_DEFAULT_API_URL;
     return new AOAClient({ clientId, clientSecret, tokenUrl, apiUrl });
 }
 // --- Report building ---

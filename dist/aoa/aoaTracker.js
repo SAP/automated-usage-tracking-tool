@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const aoaClient_1 = require("./aoaClient");
 const AOA_MISSING_MESSAGE = 'AOA tracking is not configured. Please provide AOA_CLIENT_ID and AOA_CLIENT_SECRET to enable AOA tracking.';
 class AoaTracker {
-    constructor(options) {
-        this.client = (0, aoaClient_1.createAOAClient)(options);
+    constructor() {
+        this.client = (0, aoaClient_1.createAOAClient)();
     }
     init() {
         if (!this.client) {
