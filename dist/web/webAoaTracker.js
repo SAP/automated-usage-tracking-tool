@@ -10,11 +10,27 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _WebAoaTracker_warningDialogId;
 Object.defineProperty(exports, "__esModule", { value: true });
 const aoaTracker_1 = __importDefault(require("../aoa/aoaTracker"));
+const aoaClient_1 = require("../aoa/aoaClient");
 class WebAoaTracker extends aoaTracker_1.default {
     constructor() {
         super();
         _WebAoaTracker_warningDialogId.set(this, 'automated-usage-tracking-tool-dialog-warning');
         this.init();
+    }
+    resolveConfig() {
+        var _a, _b, _c, _d;
+        try {
+            const clientId = (_a = localStorage.getItem('aoaClientId')) !== null && _a !== void 0 ? _a : '';
+            const clientSecret = (_b = localStorage.getItem('aoaClientSecret')) !== null && _b !== void 0 ? _b : '';
+            if (!clientId || !clientSecret)
+                return null;
+            const tokenUrl = (_c = localStorage.getItem('aoaTokenUrl')) !== null && _c !== void 0 ? _c : aoaClient_1.AOA_DEFAULT_TOKEN_URL;
+            const apiUrl = (_d = localStorage.getItem('aoaApiUrl')) !== null && _d !== void 0 ? _d : aoaClient_1.AOA_DEFAULT_API_URL;
+            return { clientId, clientSecret, tokenUrl, apiUrl };
+        }
+        catch (_e) {
+            return null;
+        }
     }
     warnMissing(message) {
         if (typeof document === 'undefined') {

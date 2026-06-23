@@ -9,8 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.createAOAClient = createAOAClient;
+exports.AOA_DEFAULT_API_URL = exports.AOA_DEFAULT_TOKEN_URL = void 0;
 const toolRegistry_1 = require("./toolRegistry");
+exports.AOA_DEFAULT_TOKEN_URL = 'https://sapit-crossfunctions-prod-ragdoll.authentication.eu10.hana.ondemand.com/oauth/token';
+exports.AOA_DEFAULT_API_URL = 'https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com';
 class AOAClient {
     constructor(config) {
         this.config = config;
@@ -70,38 +72,6 @@ class AOAClient {
     }
 }
 exports.default = AOAClient;
-// --- Config resolution ---
-const AOA_DEFAULT_TOKEN_URL = 'https://sapit-crossfunctions-prod-ragdoll.authentication.eu10.hana.ondemand.com/oauth/token';
-const AOA_DEFAULT_API_URL = 'https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com';
-function getEnv(key) {
-    try {
-        return typeof process !== 'undefined' && process.env ? process.env[key] : undefined;
-    }
-    catch (_a) {
-        return undefined;
-    }
-}
-function getLocalStorageItem(key) {
-    var _a;
-    try {
-        if (typeof localStorage !== 'undefined') {
-            return (_a = localStorage.getItem(key)) !== null && _a !== void 0 ? _a : undefined;
-        }
-    }
-    catch (_b) {
-        return undefined;
-    }
-}
-function createAOAClient() {
-    var _a, _b, _c, _d, _e, _f, _g, _h;
-    const clientId = (_b = (_a = getLocalStorageItem('aoaClientId')) !== null && _a !== void 0 ? _a : getEnv('AOA_CLIENT_ID')) !== null && _b !== void 0 ? _b : '';
-    const clientSecret = (_d = (_c = getLocalStorageItem('aoaClientSecret')) !== null && _c !== void 0 ? _c : getEnv('AOA_CLIENT_SECRET')) !== null && _d !== void 0 ? _d : '';
-    if (!clientId || !clientSecret)
-        return null;
-    const tokenUrl = (_f = (_e = getLocalStorageItem('aoaTokenUrl')) !== null && _e !== void 0 ? _e : getEnv('AOA_TOKEN_URL')) !== null && _f !== void 0 ? _f : AOA_DEFAULT_TOKEN_URL;
-    const apiUrl = (_h = (_g = getLocalStorageItem('aoaApiUrl')) !== null && _g !== void 0 ? _g : getEnv('AOA_API_URL')) !== null && _h !== void 0 ? _h : AOA_DEFAULT_API_URL;
-    return new AOAClient({ clientId, clientSecret, tokenUrl, apiUrl });
-}
 // --- Report building ---
 const AOA_FIXED_FIELDS = {
     customerName: 'MULTIPLE',

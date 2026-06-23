@@ -1,5 +1,8 @@
 import { getToolByName } from './toolRegistry'
 
+export const AOA_DEFAULT_TOKEN_URL = 'https://sapit-crossfunctions-prod-ragdoll.authentication.eu10.hana.ondemand.com/oauth/token'
+export const AOA_DEFAULT_API_URL = 'https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com'
+
 export interface AOAConfig {
   clientId: string
   clientSecret: string
@@ -88,41 +91,6 @@ export default class AOAClient {
   }
 
 
-}
-
-// --- Config resolution ---
-
-const AOA_DEFAULT_TOKEN_URL = 'https://sapit-crossfunctions-prod-ragdoll.authentication.eu10.hana.ondemand.com/oauth/token'
-const AOA_DEFAULT_API_URL = 'https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com'
-
-function getEnv(key: string): string | undefined {
-  try {
-    return typeof process !== 'undefined' && process.env ? process.env[key] : undefined
-  } catch {
-    return undefined
-  }
-}
-
-function getLocalStorageItem(key: string): string | undefined {
-  try {
-    if (typeof localStorage !== 'undefined') {
-      return localStorage.getItem(key) ?? undefined
-    }
-  } catch {
-    return undefined
-  }
-}
-
-export function createAOAClient(): AOAClient | null {
-  const clientId = getLocalStorageItem('aoaClientId') ?? getEnv('AOA_CLIENT_ID') ?? ''
-  const clientSecret = getLocalStorageItem('aoaClientSecret') ?? getEnv('AOA_CLIENT_SECRET') ?? ''
-
-  if (!clientId || !clientSecret) return null
-
-  const tokenUrl = getLocalStorageItem('aoaTokenUrl') ?? getEnv('AOA_TOKEN_URL') ?? AOA_DEFAULT_TOKEN_URL
-  const apiUrl = getLocalStorageItem('aoaApiUrl') ?? getEnv('AOA_API_URL') ?? AOA_DEFAULT_API_URL
-
-  return new AOAClient({ clientId, clientSecret, tokenUrl, apiUrl })
 }
 
 // --- Report building ---

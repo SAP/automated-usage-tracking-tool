@@ -8,14 +8,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const aoaClient_1 = require("./aoaClient");
+const aoaClient_1 = __importDefault(require("./aoaClient"));
 const AOA_MISSING_MESSAGE = 'AOA tracking is not configured. Please provide AOA_CLIENT_ID and AOA_CLIENT_SECRET to enable AOA tracking.';
 class AoaTracker {
     constructor() {
-        this.client = (0, aoaClient_1.createAOAClient)();
+        this.client = null;
     }
     init() {
+        const config = this.resolveConfig();
+        this.client = config ? new aoaClient_1.default(config) : null;
         if (!this.client) {
             this.warnMissing(AOA_MISSING_MESSAGE);
         }
