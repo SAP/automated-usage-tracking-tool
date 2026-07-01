@@ -4,5 +4,5 @@ export default abstract class AoaTracker {
     protected abstract resolveConfig(): AOAConfig | null;
     protected abstract warnMissing(message: string): void;
     init(): void;
-    trackUsage(toolName: string): Promise<void>;
+    trackUsage(toolName: string, featureName?: string): Promise<void>;
 }

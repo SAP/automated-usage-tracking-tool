@@ -64,9 +64,9 @@ class AOAClient {
             throw new Error(`AOA tracking error (${response.status}): ${errorBody.errorMessage}${errorBody.detailedErrors ? ' - ' + JSON.stringify(errorBody.detailedErrors) : ''}`);
         });
     }
-    trackUsage(toolName) {
+    trackUsage(toolName, featureName) {
         return __awaiter(this, void 0, void 0, function* () {
-            const report = buildReport(toolName);
+            const report = buildReport(toolName, featureName);
             yield this.sendTrackingReport([report]);
         });
     }
@@ -81,10 +81,10 @@ const AOA_FIXED_FIELDS = {
     executor: 'MULTIPLE',
     executorCostCenter: '144496124',
 };
-function buildReport(toolName) {
-    const tool = (0, toolRegistry_1.getToolByName)(toolName);
+function buildReport(toolName, featureName) {
+    const tool = (0, toolRegistry_1.getTool)(featureName, toolName);
     if (!tool) {
-        throw new Error(`Tool not found in registry: ${toolName}`);
+        throw new Error(`Tool not found in registry: ${featureName ? `featureName=${featureName}, ` : ''}toolName=${toolName}`);
     }
     return Object.assign({ toolId: tool.toolId, numberOfExecutions: 1, actualEffortReduction: tool.actualEffortReduction, date: new Date().toISOString().split('T')[0] }, AOA_FIXED_FIELDS);
 }

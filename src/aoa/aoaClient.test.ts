@@ -181,4 +181,79 @@ describe('AOAClient', () => {
     })
   })
 
+  describe('trackUsage', () => {
+    function mockTokenAndReport() {
+      global.fetch = vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ access_token: 'test-token', expires_in: 43199 }),
+        })
+        .mockResolvedValueOnce({
+          status: 201,
+        }) as Mock
+    }
+
+    test('builds report by toolName when no featureName is provided', async () => {
+      mockTokenAndReport()
+
+      await client.trackUsage('Commerce Upgrade Assistant')
+
+      expect(global.fetch).toHaveBeenLastCalledWith(
+        `${config.apiUrl}/api/automations/tracking-report`,
+        expect.objectContaining({
+          body: expect.stringContaining('"toolId":"502"'),
+        }),
+      )
+    })
+
+    test('builds report by featureName when provided', async () => {
+      mockTokenAndReport()
+
+      await client.trackUsage('Customer Data Cloud toolkit', 'Email Templates')
+
+      expect(global.fetch).toHaveBeenLastCalledWith(
+        `${config.apiUrl}/api/automations/tracking-report`,
+        expect.objectContaining({
+          body: expect.stringContaining('"toolId":"11827"'),
+        }),
+      )
+    })
+
+    test('falls back to toolName when featureName is not found in registry', async () => {
+      mockTokenAndReport()
+
+      await client.trackUsage('Commerce Upgrade Assistant', 'NonExistentFeature')
+
+      expect(global.fetch).toHaveBeenLastCalledWith(
+        `${config.apiUrl}/api/automations/tracking-report`,
+        expect.objectContaining({
+          body: expect.stringContaining('"toolId":"502"'),
+        }),
+      )
+    })
+
+    test('throws error when neither featureName nor toolName are found', async () => {
+      await expect(client.trackUsage('NonExistentTool', 'NonExistentFeature')).rejects.toThrow(
+        'Tool not found in registry: featureName=NonExistentFeature, toolName=NonExistentTool',
+      )
+    })
+
+    test('throws error when toolName is not found and no featureName', async () => {
+      await expect(client.trackUsage('NonExistentTool')).rejects.toThrow(
+        'Tool not found in registry: toolName=NonExistentTool',
+      )
+    })
+
+    test('uses correct actualEffortReduction from featureName entry', async () => {
+      mockTokenAndReport()
+
+      await client.trackUsage('Customer Data Cloud toolkit', 'Site Deployer')
+
+      const lastCall = (global.fetch as Mock).mock.calls.at(-1)
+      const body = JSON.parse(lastCall[1].body)
+      expect(body[0].actualEffortReduction).toBe(1)
+    })
+  })
+
 })

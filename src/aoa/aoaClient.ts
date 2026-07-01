@@ -1,4 +1,4 @@
-import { getToolByName } from './toolRegistry'
+import { getTool } from './toolRegistry'
 
 export const AOA_DEFAULT_TOKEN_URL = 'https://sapit-crossfunctions-prod-ragdoll.authentication.eu10.hana.ondemand.com/oauth/token'
 export const AOA_DEFAULT_API_URL = 'https://asc-auto-ops-tracking-api-prod.cfapps.eu10-004.hana.ondemand.com'
@@ -85,8 +85,8 @@ export default class AOAClient {
     )
   }
 
-  async trackUsage(toolName: string): Promise<void> {
-    const report = buildReport(toolName)
+  async trackUsage(toolName: string, featureName?: string): Promise<void> {
+    const report = buildReport(toolName, featureName)
     await this.sendTrackingReport([report])
   }
 
@@ -104,10 +104,10 @@ const AOA_FIXED_FIELDS = {
   executorCostCenter: '144496124',
 }
 
-function buildReport(toolName: string): TrackingReport {
-  const tool = getToolByName(toolName)
+function buildReport(toolName: string, featureName?: string): TrackingReport {
+  const tool = getTool(featureName, toolName)
   if (!tool) {
-    throw new Error(`Tool not found in registry: ${toolName}`)
+    throw new Error(`Tool not found in registry: ${featureName ? `featureName=${featureName}, ` : ''}toolName=${toolName}`)
   }
   return {
     toolId: tool.toolId,

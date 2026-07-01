@@ -17,10 +17,10 @@ export default abstract class AoaTracker {
     }
   }
 
-  async trackUsage(toolName: string): Promise<void> {
+  async trackUsage(toolName: string, featureName?: string): Promise<void> {
     if (this.client) {
       try {
-        await this.client.trackUsage(toolName)
+        await this.client.trackUsage(toolName, featureName)
       } catch (error) {
         console.error('[AOA] tracking failed:', error instanceof Error ? error.message : error)
       }
