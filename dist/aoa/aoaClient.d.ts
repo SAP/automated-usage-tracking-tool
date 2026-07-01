@@ -29,5 +29,5 @@ export default class AOAClient {
     constructor(config: AOAConfig);
     getAccessToken(): Promise<string>;
     sendTrackingReport(reports: TrackingReport[]): Promise<void>;
-    trackUsage(toolName: string): Promise<void>;
+    trackUsage(toolName: string, featureName?: string): Promise<void>;
 }
