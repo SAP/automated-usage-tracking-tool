@@ -1,6 +1,7 @@
 export interface ToolDefinition {
   toolId: string
   toolName: string
+  featureName?: string
   actualEffortReduction: number
 }
 
@@ -18,7 +19,14 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   { toolId: '515', toolName: 'CRM Move', actualEffortReduction: 5 },
   { toolId: '514', toolName: 'CX Bid Estimator', actualEffortReduction: 6 },
   { toolId: '520', toolName: 'Customer Data Cloud accelerator', actualEffortReduction: 30 },
-  { toolId: '11827', toolName: 'Customer Data Cloud toolkit', actualEffortReduction: 5 },
+  { toolId: '11827', toolName: 'Customer Data Cloud toolkit', featureName: 'Copy Configuration Extended', actualEffortReduction: 1 },
+  { toolId: '11827', toolName: 'Customer Data Cloud toolkit', featureName: 'Email Templates', actualEffortReduction: 1 },
+  { toolId: '11827', toolName: 'Customer Data Cloud toolkit', featureName: 'Import Data', actualEffortReduction: 1 },
+  { toolId: '11827', toolName: 'Customer Data Cloud toolkit', featureName: 'Prettify Screen-Set Javascript', actualEffortReduction: 1 },
+  { toolId: '11827', toolName: 'Customer Data Cloud toolkit', featureName: 'Deploy and Import', actualEffortReduction: 1 },
+  { toolId: '11827', toolName: 'Customer Data Cloud toolkit', featureName: 'Site Deployer', actualEffortReduction: 1 },
+  { toolId: '11827', toolName: 'Customer Data Cloud toolkit', featureName: 'SMS Templates', actualEffortReduction: 1 },
+  { toolId: '11827', toolName: 'Customer Data Cloud toolkit', featureName: 'VersionControl', actualEffortReduction: 1 },
   { toolId: '501', toolName: 'UMAT - Upgrade & Migration Assessment Automation for SAP Commerce (3.0)', actualEffortReduction: 17 },
   { toolId: '517', toolName: 'Multicountry Extension', actualEffortReduction: 30 },
   { toolId: '518', toolName: 'DTOCaching', actualEffortReduction: 14 },
@@ -64,8 +72,23 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   { toolId: '11798', toolName: 'Commerce Document Management System Integration', actualEffortReduction: 27.5 },
 ]
 
+export function getToolByFeatureName(featureName: string): ToolDefinition | undefined {
+  return TOOL_REGISTRY.find((t) => t.featureName === featureName)
+}
+
 export function getToolByName(toolName: string): ToolDefinition | undefined {
   return TOOL_REGISTRY.find((t) => t.toolName === toolName)
+}
+
+export function getTool(featureName?: string, toolName?: string): ToolDefinition | undefined {
+  if (featureName) {
+    const byFeature = getToolByFeatureName(featureName)
+    if (byFeature) return byFeature
+  }
+  if (toolName) {
+    return getToolByName(toolName)
+  }
+  return undefined
 }
 
 export default TOOL_REGISTRY
