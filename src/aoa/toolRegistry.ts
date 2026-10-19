@@ -59,7 +59,7 @@ const TOOL_REGISTRY: ToolDefinition[] = [
   { toolId: '13021', toolName: 'Emarsys - js snippet for Composable Storefront Upgrade Analyzer', actualEffortReduction: 4 },
   { toolId: '516', toolName: 'CDC Data Workbench', actualEffortReduction: 9 },
   { toolId: '12901', toolName: 'Assessmate', actualEffortReduction: 8 },
-  { toolId: '11750', toolName: 'Transformate', actualEffortReduction: 60 },
+  { toolId: '11750', toolName: 'Custom Code Transition Tool for SAP Sales Cloud and SAP Service Cloud', actualEffortReduction: 60 },
   { toolId: '11788', toolName: 'commercecpihookcapture commercecpihookcapturebackoffice', actualEffortReduction: 19 },
   { toolId: '11798', toolName: 'Commerce Document Management System Integration', actualEffortReduction: 27.5 },
 ]
