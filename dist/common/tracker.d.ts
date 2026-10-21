@@ -29,4 +29,5 @@ export interface ConsentArguments {
 export interface TrackUsageArguments {
     toolName: string;
     featureName?: string;
+    actualEffortReduction?: number;
 }

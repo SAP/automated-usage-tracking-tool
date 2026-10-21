@@ -25,11 +25,11 @@ class AoaTracker {
             this.warnMissing(AOA_MISSING_MESSAGE);
         }
     }
-    trackUsage(toolName) {
+    trackUsage(toolName, actualEffortReduction) {
         return __awaiter(this, void 0, void 0, function* () {
             if (this.client) {
                 try {
-                    yield this.client.trackUsage(toolName);
+                    yield this.client.trackUsage(toolName, actualEffortReduction);
                 }
                 catch (error) {
                     console.error('[AOA] tracking failed:', error instanceof Error ? error.message : error);
