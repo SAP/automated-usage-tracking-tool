@@ -84,7 +84,7 @@ const AOA_FIXED_FIELDS = {
 function buildReport(toolName, featureName, actualEffortReduction) {
     const tool = (0, toolRegistry_1.getToolByName)(toolName, featureName);
     if (!tool) {
-        throw new Error(`Tool not found in registry: ${toolName}`);
+        throw new Error(`Tool not found in registry: ${toolName}${featureName ? ` (feature: ${featureName})` : ''}`);
     }
     return Object.assign({ toolId: tool.toolId, numberOfExecutions: 1, actualEffortReduction: actualEffortReduction !== null && actualEffortReduction !== void 0 ? actualEffortReduction : tool.actualEffortReduction, date: new Date().toISOString().split('T')[0] }, AOA_FIXED_FIELDS);
 }

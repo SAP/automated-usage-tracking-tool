@@ -107,7 +107,7 @@ const AOA_FIXED_FIELDS = {
 function buildReport(toolName: string, featureName?: string, actualEffortReduction?: number): TrackingReport {
   const tool = getToolByName(toolName, featureName)
   if (!tool) {
-    throw new Error(`Tool not found in registry: ${toolName}`)
+    throw new Error(`Tool not found in registry: ${toolName}${featureName ? ` (feature: ${featureName})` : ''}`)
   }
   return {
     toolId: tool.toolId,
