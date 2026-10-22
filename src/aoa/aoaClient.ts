@@ -85,8 +85,8 @@ export default class AOAClient {
     )
   }
 
-  async trackUsage(toolName: string, actualEffortReduction?: number): Promise<void> {
-    const report = buildReport(toolName, actualEffortReduction)
+  async trackUsage(toolName: string, featureName?: string, actualEffortReduction?: number): Promise<void> {
+    const report = buildReport(toolName, featureName, actualEffortReduction)
     await this.sendTrackingReport([report])
   }
 
@@ -104,10 +104,10 @@ const AOA_FIXED_FIELDS = {
   executorCostCenter: '144496124',
 }
 
-function buildReport(toolName: string, actualEffortReduction?: number): TrackingReport {
-  const tool = getToolByName(toolName)
+function buildReport(toolName: string, featureName?: string, actualEffortReduction?: number): TrackingReport {
+  const tool = getToolByName(toolName, featureName)
   if (!tool) {
-    throw new Error(`Tool not found in registry: ${toolName}`)
+    throw new Error(`Tool not found in registry: ${toolName}${featureName ? ` (feature: ${featureName})` : ''}`)
   }
   return {
     toolId: tool.toolId,

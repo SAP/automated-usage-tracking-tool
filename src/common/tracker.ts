@@ -43,7 +43,7 @@ export default abstract class Tracker {
       await this.account.setLatestUsages(this.storage.getEmail(), this.storage.getLatestUsages())
     }
 
-    await this.aoaTracker.trackUsage(trackUsageArguments.toolName, trackUsageArguments.actualEffortReduction)
+    await this.aoaTracker.trackUsage(trackUsageArguments.toolName, trackUsageArguments.featureName, trackUsageArguments.actualEffortReduction)
   }
 
   private async requestConsent(consentFunction: ConsentFunction, consentArguments: ConsentArguments): Promise<boolean> {

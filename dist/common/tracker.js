@@ -48,7 +48,7 @@ class Tracker {
                 this.storage.setLatestUsage(trackUsageArguments.toolName, trackUsageArguments.featureName);
                 yield this.account.setLatestUsages(this.storage.getEmail(), this.storage.getLatestUsages());
             }
-            yield this.aoaTracker.trackUsage(trackUsageArguments.toolName, trackUsageArguments.actualEffortReduction);
+            yield this.aoaTracker.trackUsage(trackUsageArguments.toolName, trackUsageArguments.featureName, trackUsageArguments.actualEffortReduction);
         });
     }
     requestConsent(consentFunction, consentArguments) {
