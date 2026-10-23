@@ -20,7 +20,7 @@ async function requestConsentQuestionButtonClickHandler() {
 }
 
 async function trackUsageButtonClickHandler() {
-  return await trackingTool.trackUsage({ toolName: 'javascript-web-client', featureName: 'example' })
+  return await trackingTool.trackUsage({ toolName: 'javascript-web-client', featureName: 'example', actualEffortReduction: 1 })
 }
 
 export default {
