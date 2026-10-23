@@ -82,8 +82,7 @@ const AOA_FIXED_FIELDS = {
     executorCostCenter: '144496124',
 };
 function buildReport(toolName, featureName, actualEffortReduction) {
-    var _a;
-    const tool = (_a = (0, toolRegistry_1.getToolByName)(toolName, featureName)) !== null && _a !== void 0 ? _a : (featureName ? (0, toolRegistry_1.getToolByName)(toolName) : undefined);
+    const tool = (0, toolRegistry_1.getToolByName)(toolName, featureName);
     if (!tool) {
         throw new Error(`Tool not found in registry: ${toolName}`);
     }

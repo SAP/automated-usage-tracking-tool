@@ -102,7 +102,8 @@ const TOOL_REGISTRY: ToolDefinition[] = [
 ]
 
 export function getToolByName(toolName: string, featureName?: string): ToolDefinition | undefined {
-  return TOOL_REGISTRY.find((t) => t.toolName === toolName && t.featureName === featureName)
+  return TOOL_REGISTRY.find((t) => t.toolName === toolName && t.featureName === featureName) ??
+    (featureName ? TOOL_REGISTRY.find((t) => t.toolName === toolName && t.featureName === undefined) : undefined)
 }
 
 export default TOOL_REGISTRY

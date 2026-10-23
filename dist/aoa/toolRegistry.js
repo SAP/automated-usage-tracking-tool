@@ -96,7 +96,8 @@ const TOOL_REGISTRY = [
     { toolId: '11798', toolName: 'Commerce Document Management System Integration', actualEffortReduction: 27.5 },
 ];
 function getToolByName(toolName, featureName) {
-    return TOOL_REGISTRY.find((t) => t.toolName === toolName && t.featureName === featureName);
+    var _a;
+    return (_a = TOOL_REGISTRY.find((t) => t.toolName === toolName && t.featureName === featureName)) !== null && _a !== void 0 ? _a : (featureName ? TOOL_REGISTRY.find((t) => t.toolName === toolName && t.featureName === undefined) : undefined);
 }
 exports.default = TOOL_REGISTRY;
 //# sourceMappingURL=toolRegistry.js.map
