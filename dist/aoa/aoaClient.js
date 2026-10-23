@@ -82,9 +82,10 @@ const AOA_FIXED_FIELDS = {
     executorCostCenter: '144496124',
 };
 function buildReport(toolName, featureName, actualEffortReduction) {
-    const tool = (0, toolRegistry_1.getToolByName)(toolName, featureName);
+    var _a;
+    const tool = (_a = (0, toolRegistry_1.getToolByName)(toolName, featureName)) !== null && _a !== void 0 ? _a : (featureName ? (0, toolRegistry_1.getToolByName)(toolName) : undefined);
     if (!tool) {
-        throw new Error(`Tool not found in registry: ${toolName}${featureName ? ` (feature: ${featureName})` : ''}`);
+        throw new Error(`Tool not found in registry: ${toolName}`);
     }
     return Object.assign({ toolId: tool.toolId, numberOfExecutions: 1, actualEffortReduction: actualEffortReduction !== null && actualEffortReduction !== void 0 ? actualEffortReduction : tool.actualEffortReduction, date: new Date().toISOString().split('T')[0] }, AOA_FIXED_FIELDS);
 }
