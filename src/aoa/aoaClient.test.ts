@@ -181,4 +181,47 @@ describe('AOAClient', () => {
     })
   })
 
+  describe('trackUsage', () => {
+    const mockFetch = (status = 201) =>
+      vi
+        .fn()
+        .mockResolvedValueOnce({
+          ok: true,
+          json: () => Promise.resolve({ access_token: 'test-token', expires_in: 43199 }),
+        })
+        .mockResolvedValueOnce({ status }) as Mock
+
+    test('uses registry actualEffortReduction when none is provided', async () => {
+      global.fetch = mockFetch()
+      await client.trackUsage('One Day Commerce')
+      const body = JSON.parse((global.fetch as Mock).mock.calls[1][1].body)
+      expect(body[0].actualEffortReduction).toBe(4)
+    })
+
+    test('uses feature-specific actualEffortReduction when featureName matches', async () => {
+      global.fetch = mockFetch()
+      await client.trackUsage('One Day Commerce', 'Accelerator Data')
+      const body = JSON.parse((global.fetch as Mock).mock.calls[1][1].body)
+      expect(body[0].actualEffortReduction).toBe(1)
+    })
+
+    test('falls back to base entry when featureName has no registry entry', async () => {
+      global.fetch = mockFetch()
+      await client.trackUsage('One Day Commerce', 'NonExistentFeature')
+      const body = JSON.parse((global.fetch as Mock).mock.calls[1][1].body)
+      expect(body[0].actualEffortReduction).toBe(4)
+    })
+
+    test('caller-provided actualEffortReduction overrides registry value', async () => {
+      global.fetch = mockFetch()
+      await client.trackUsage('One Day Commerce', undefined, 99)
+      const body = JSON.parse((global.fetch as Mock).mock.calls[1][1].body)
+      expect(body[0].actualEffortReduction).toBe(99)
+    })
+
+    test('throws when toolName does not exist in registry', async () => {
+      await expect(client.trackUsage('NonExistentTool')).rejects.toThrow('Tool not found in registry: NonExistentTool')
+    })
+  })
+
 })
