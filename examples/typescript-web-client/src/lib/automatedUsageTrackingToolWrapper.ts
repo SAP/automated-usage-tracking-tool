@@ -5,7 +5,7 @@ const trackerArguments: TrackerArguments = { apiKey: '4_3OulQC05sfcJ-D5mG6aMNg',
 
 const consentArguments: ConsentArguments = {}
 
-const trackUsageArguments: TrackUsageArguments = { toolName: 'typescript-cli-client', featureName: 'example' }
+const trackUsageArguments: TrackUsageArguments = { toolName: 'typescript-cli-client', featureName: 'example', actualEffortReduction: 1 }
 
 const trackingTool = new CliTracker(trackerArguments)
 

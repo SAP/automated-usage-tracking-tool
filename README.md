@@ -79,7 +79,8 @@ Track usages of your application features.
 ```js
 await trackingTool.trackUsage({
   toolName: [toolName],
-  featureName: [featureName],
+  featureName: [featureName],           // Optional
+  actualEffortReduction: [days],        // Optional - overrides the registry default
 })
 ```
 
@@ -204,6 +205,17 @@ await trackingTool.trackUsages([
   { toolName: 'Commerce Migration Toolkit' },
 ])
 ```
+
+### AOA Registry and featureName
+
+The AOA channel resolves `actualEffortReduction` from an internal registry using `toolName` and, optionally, `featureName`:
+
+| Scenario | Behaviour |
+|---|---|
+| No `featureName` passed | Uses the base registry entry for `toolName` |
+| `featureName` matches a registry entry | Uses that feature's `actualEffortReduction` |
+| `featureName` has no registry entry | Falls back to the base entry for `toolName` |
+| `actualEffortReduction` explicitly passed | Always overrides the registry value |
 
 ### Obtaining credentials
 

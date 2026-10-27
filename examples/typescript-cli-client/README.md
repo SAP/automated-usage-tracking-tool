@@ -36,11 +36,11 @@ This will compile the TypeScript code and execute the resulting JavaScript file.
 
 ### `src/index.ts`
 
-This is the entry point of the application. It imports and uses functions from [`automatedUsageTrackingToolWrapper.ts`](../examples/typescript-cli-client/src/lib/automatedUsageTrackingToolWrapper.ts).
+This is the entry point of the application. It imports and uses functions from [`automatedUsageTrackingToolWrapper.ts`](src/lib/automatedUsageTrackingToolWrapper.ts).
 
 ### `src/lib/automatedUsageTrackingToolWrapper.ts`
 
-This file contains the wrapper functions for the `@sap_oss/automated-usage-tracking-tool`. It includes functions like [`trackUsage`](../examples/typescript-cli-client/src/lib/automatedUsageTrackingToolWrapper.ts#L1) and [`trackUsageArguments`](../examples/typescript-cli-client/src/lib/automatedUsageTrackingToolWrapper.ts#L2).
+This file contains the wrapper functions for the `@sap_oss/automated-usage-tracking-tool`. It includes functions like [`trackUsage`](src/lib/automatedUsageTrackingToolWrapper.ts#L25) and [`trackUsageArguments`](src/lib/automatedUsageTrackingToolWrapper.ts#L7).
 
 ## License
 

@@ -19,9 +19,10 @@ export async function requestConsentQuestion() {
   })
 }
 
-export async function trackUsage({ featureName }) {
+export async function trackUsage({ featureName, actualEffortReduction }) {
   return await trackingTool.trackUsage({
     toolName: 'javascript-cli-client',
     featureName,
+    actualEffortReduction,
   })
 }
