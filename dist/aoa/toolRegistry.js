@@ -60,7 +60,7 @@ const TOOL_REGISTRY = [
     { toolId: '11768', toolName: 'One Day Commerce', featureName: 'Early Login', actualEffortReduction: 1 },
     { toolId: '11768', toolName: 'One Day Commerce', featureName: 'Electronics Feature', actualEffortReduction: 1 },
     { toolId: '11768', toolName: 'One Day Commerce', featureName: 'Git Support', actualEffortReduction: 0 },
-    { toolId: '11768', toolName: 'One Day Commerce', featureName: 'Mulitcountry Setup', actualEffortReduction: 5 },
+    { toolId: '11768', toolName: 'One Day Commerce', featureName: 'Multicountry Setup', actualEffortReduction: 5 },
     { toolId: '11768', toolName: 'One Day Commerce', featureName: 'Order Management Feature', actualEffortReduction: 0.2 },
     { toolId: '11768', toolName: 'One Day Commerce', featureName: 'PDP Downloads', actualEffortReduction: 2 },
     { toolId: '11768', toolName: 'One Day Commerce', featureName: 'Patches', actualEffortReduction: 0.2 },
@@ -75,6 +75,8 @@ const TOOL_REGISTRY = [
     { toolId: '11768', toolName: 'One Day Commerce', featureName: 'SmartEdit', actualEffortReduction: 1 },
     { toolId: '11768', toolName: 'One Day Commerce', featureName: 'Spartacus', actualEffortReduction: 2 },
     { toolId: '11768', toolName: 'One Day Commerce', featureName: 'Wishlist', actualEffortReduction: 1 },
+    { toolId: '11768', toolName: 'One Day Commerce', featureName: 'SelfService', actualEffortReduction: 130 },
+    { toolId: '11768', toolName: 'One Day Commerce', featureName: 'Commerce Document Management System Integration', actualEffortReduction: 27.5 },
     { toolId: '11829', toolName: 'AI Unit Tests Automation', actualEffortReduction: 2 },
     { toolId: '11762', toolName: 'Open Payment Framework SDK', actualEffortReduction: 19 },
     { toolId: '546', toolName: 'Easy Extension Framework', actualEffortReduction: 20 },
@@ -94,6 +96,7 @@ const TOOL_REGISTRY = [
     { toolId: '11750', toolName: 'Custom Code Transition Tool for SAP Sales Cloud and SAP Service Cloud', actualEffortReduction: 60 },
     { toolId: '11788', toolName: 'commercecpihookcapture commercecpihookcapturebackoffice', actualEffortReduction: 19 },
     { toolId: '11798', toolName: 'Commerce Document Management System Integration', actualEffortReduction: 27.5 },
+    { toolId: '12976', toolName: 'Data Driven Storefront', actualEffortReduction: 30 },
 ];
 function getToolByName(toolName, featureName) {
     var _a;
